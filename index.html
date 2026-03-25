@@ -1,0 +1,2053 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rizko Team Portal</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">R</div>
+      <span class="logo-text">Rizko Team</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-page="contacts">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Контакты</span>
+      </a>
+      <a href="#" class="nav-item" data-page="tasks">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Задачи</span>
+      </a>
+      <a href="#" class="nav-item" data-page="strategy">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span>Стратегии</span>
+      </a>
+      <a href="#" class="nav-item" data-page="reports">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        <span>Отчёты</span>
+      </a>
+      <a href="#" class="nav-item" data-page="ai-chat">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>AI Чат</span>
+      </a>
+      <a href="#" class="nav-item" data-page="team">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Команда</span>
+      </a>
+
+      <div class="nav-divider"></div>
+      <span class="nav-section">Маркетинг</span>
+
+      <a href="#" class="nav-item" data-page="calendar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Календарь</span>
+      </a>
+      <a href="#" class="nav-item" data-page="scripts">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Скрипт-банк</span>
+      </a>
+
+      <span class="nav-section">Команда</span>
+
+      <a href="#" class="nav-item" data-page="wiki">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span>Wiki</span>
+      </a>
+      <a href="#" class="nav-item" data-page="files">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        <span>Файлы</span>
+      </a>
+
+      <span class="nav-section">Бизнес</span>
+
+      <a href="#" class="nav-item" data-page="finance">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>Финансы</span>
+      </a>
+      <a href="#" class="nav-item" data-page="notifications">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span>Уведомления</span>
+      </a>
+      <a href="#" class="nav-item" data-page="platforms">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span>Платформы</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">AK</div>
+      <div class="user-info">
+        <span class="user-name">Akyl</span>
+        <span class="user-role">Admin</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- Header -->
+    <header class="header">
+      <button class="menu-toggle" id="menuToggle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="header-search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Поиск по порталу..." />
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="badge">3</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content Container -->
+    <div class="content">
+
+      <!-- ===== DASHBOARD PAGE ===== -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h1>Dashboard</h1>
+          <p class="subtitle">Обзор активности команды</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">24</span>
+              <span class="stat-label">Контакты</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">8</span>
+              <span class="stat-label">Активных задач</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">12</span>
+              <span class="stat-label">Видео отчётов</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">156</span>
+              <span class="stat-label">AI сообщений</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <h3 class="card-title">Последние задачи</h3>
+            <div class="task-list-mini">
+              <div class="task-mini">
+                <span class="task-dot green"></span>
+                <span>Снять 3 TikTok видео</span>
+                <span class="task-tag">Маркетинг</span>
+              </div>
+              <div class="task-mini">
+                <span class="task-dot yellow"></span>
+                <span>Написать стратегию Q2</span>
+                <span class="task-tag">Стратегия</span>
+              </div>
+              <div class="task-mini">
+                <span class="task-dot red"></span>
+                <span>Связаться с блогерами</span>
+                <span class="task-tag">Outreach</span>
+              </div>
+              <div class="task-mini">
+                <span class="task-dot blue"></span>
+                <span>Подготовить pitch deck</span>
+                <span class="task-tag">Инвестиции</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Активность команды</h3>
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-avatar">LJ</div>
+                <div class="activity-text">
+                  <strong>Lujan</strong> добавил новый контакт
+                  <span class="activity-time">2 мин назад</span>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-avatar">AK</div>
+                <div class="activity-text">
+                  <strong>Akyl</strong> завершил задачу "Анализ конкурентов"
+                  <span class="activity-time">15 мин назад</span>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-avatar">AI</div>
+                <div class="activity-text">
+                  <strong>AI</strong> сгенерировал отчёт по видео
+                  <span class="activity-time">1 час назад</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CONTACTS PAGE ===== -->
+      <div class="page" id="page-contacts">
+        <div class="page-header">
+          <h1>Контакты</h1>
+          <button class="btn btn-primary" onclick="openModal('contactModal')">+ Добавить контакт</button>
+        </div>
+
+        <div class="filters-bar">
+          <div class="filter-tabs">
+            <button class="filter-tab active">Все</button>
+            <button class="filter-tab">Блогеры</button>
+            <button class="filter-tab">Инвесторы</button>
+            <button class="filter-tab">Партнёры</button>
+            <button class="filter-tab">Клиенты</button>
+          </div>
+          <input type="text" class="filter-search" placeholder="Поиск контактов..." />
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Имя</th>
+                <th>Компания</th>
+                <th>Тип</th>
+                <th>Email</th>
+                <th>Соцсети</th>
+                <th>Статус</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="contact-cell">
+                    <div class="avatar-sm">MK</div>
+                    <span>Максим Козлов</span>
+                  </div>
+                </td>
+                <td>TikTok Agency</td>
+                <td><span class="badge-tag blogger">Блогер</span></td>
+                <td>maxim@example.com</td>
+                <td>
+                  <span class="social-badge">TikTok 50K</span>
+                </td>
+                <td><span class="status-dot active"></span> Активный</td>
+                <td><button class="btn-icon">...</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="contact-cell">
+                    <div class="avatar-sm">AS</div>
+                    <span>Анна Смирнова</span>
+                  </div>
+                </td>
+                <td>Venture Capital</td>
+                <td><span class="badge-tag investor">Инвестор</span></td>
+                <td>anna@vc.com</td>
+                <td>
+                  <span class="social-badge">LinkedIn</span>
+                </td>
+                <td><span class="status-dot pending"></span> В переговорах</td>
+                <td><button class="btn-icon">...</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="contact-cell">
+                    <div class="avatar-sm">DV</div>
+                    <span>Дмитрий Волков</span>
+                  </div>
+                </td>
+                <td>ContentPro</td>
+                <td><span class="badge-tag partner">Партнёр</span></td>
+                <td>dmitry@content.pro</td>
+                <td>
+                  <span class="social-badge">YouTube 120K</span>
+                </td>
+                <td><span class="status-dot active"></span> Активный</td>
+                <td><button class="btn-icon">...</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== TASKS PAGE ===== -->
+      <div class="page" id="page-tasks">
+        <div class="page-header">
+          <h1>Задачи</h1>
+          <button class="btn btn-primary" onclick="openModal('taskModal')">+ Новая задача</button>
+        </div>
+
+        <div class="kanban-board">
+          <div class="kanban-column">
+            <div class="kanban-header">
+              <span class="kanban-dot backlog"></span>
+              <h4>Backlog</h4>
+              <span class="kanban-count">3</span>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card">
+                <div class="kanban-card-tags">
+                  <span class="badge-tag marketing">Маркетинг</span>
+                </div>
+                <p class="kanban-card-title">Исследовать тренды TikTok в нише фитнес</p>
+                <div class="kanban-card-footer">
+                  <div class="avatar-xs">LJ</div>
+                  <span class="kanban-date">28 мар</span>
+                </div>
+              </div>
+              <div class="kanban-card">
+                <div class="kanban-card-tags">
+                  <span class="badge-tag content">Контент</span>
+                </div>
+                <p class="kanban-card-title">Написать 5 сценариев для Reels</p>
+                <div class="kanban-card-footer">
+                  <div class="avatar-xs">AK</div>
+                  <span class="kanban-date">30 мар</span>
+                </div>
+              </div>
+              <div class="kanban-card">
+                <div class="kanban-card-tags">
+                  <span class="badge-tag dev">Разработка</span>
+                </div>
+                <p class="kanban-card-title">Добавить аналитику в дашборд</p>
+                <div class="kanban-card-footer">
+                  <div class="avatar-xs">AK</div>
+                  <span class="kanban-date">1 апр</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="kanban-column">
+            <div class="kanban-header">
+              <span class="kanban-dot progress"></span>
+              <h4>В работе</h4>
+              <span class="kanban-count">2</span>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card highlight">
+                <div class="kanban-card-tags">
+                  <span class="badge-tag marketing">Маркетинг</span>
+                  <span class="badge-tag urgent">Срочно</span>
+                </div>
+                <p class="kanban-card-title">Снять 3 TikTok видео для запуска</p>
+                <div class="kanban-card-footer">
+                  <div class="avatar-xs">LJ</div>
+                  <span class="kanban-date">Сегодня</span>
+                </div>
+              </div>
+              <div class="kanban-card">
+                <div class="kanban-card-tags">
+                  <span class="badge-tag outreach">Outreach</span>
+                </div>
+                <p class="kanban-card-title">Связаться с 10 блогерами</p>
+                <div class="kanban-card-footer">
+                  <div class="avatar-xs">AK</div>
+                  <span class="kanban-date">26 мар</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="kanban-column">
+            <div class="kanban-header">
+              <span class="kanban-dot review"></span>
+              <h4>На проверке</h4>
+              <span class="kanban-count">1</span>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card">
+                <div class="kanban-card-tags">
+                  <span class="badge-tag strategy">Стратегия</span>
+                </div>
+                <p class="kanban-card-title">Стратегия контента на апрель</p>
+                <div class="kanban-card-footer">
+                  <div class="avatar-xs">LJ</div>
+                  <span class="kanban-date">25 мар</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="kanban-column">
+            <div class="kanban-header">
+              <span class="kanban-dot done"></span>
+              <h4>Готово</h4>
+              <span class="kanban-count">4</span>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card completed">
+                <p class="kanban-card-title">Анализ конкурентов в нише</p>
+                <div class="kanban-card-footer">
+                  <div class="avatar-xs">AK</div>
+                  <span class="kanban-date">24 мар</span>
+                </div>
+              </div>
+              <div class="kanban-card completed">
+                <p class="kanban-card-title">Настроить Rizko AI MVP</p>
+                <div class="kanban-card-footer">
+                  <div class="avatar-xs">AK</div>
+                  <span class="kanban-date">20 мар</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STRATEGY PAGE ===== -->
+      <div class="page" id="page-strategy">
+        <div class="page-header">
+          <h1>Стратегии</h1>
+          <button class="btn btn-primary">+ Новая стратегия</button>
+        </div>
+
+        <div class="strategy-grid">
+          <div class="strategy-card">
+            <div class="strategy-header">
+              <span class="strategy-status active">Активна</span>
+              <span class="strategy-date">Март 2026</span>
+            </div>
+            <h3>Контент-стратегия TikTok Q2</h3>
+            <p>Фокус на трендовых нишах: фитнес, финансы, tech. Публикация 5 видео в неделю с AI-генерированными сценариями.</p>
+            <div class="strategy-metrics">
+              <div class="metric">
+                <span class="metric-value">15</span>
+                <span class="metric-label">видео/мес</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value">50K</span>
+                <span class="metric-label">цель просмотров</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value">3</span>
+                <span class="metric-label">платформы</span>
+              </div>
+            </div>
+            <div class="strategy-team">
+              <div class="avatar-xs">AK</div>
+              <div class="avatar-xs">LJ</div>
+            </div>
+          </div>
+
+          <div class="strategy-card">
+            <div class="strategy-header">
+              <span class="strategy-status draft">Черновик</span>
+              <span class="strategy-date">Апрель 2026</span>
+            </div>
+            <h3>Outreach блогерам</h3>
+            <p>Найти и связаться с 50 микро-блогерами (10K-100K подписчиков) для коллабораций и обзоров Rizko AI.</p>
+            <div class="strategy-metrics">
+              <div class="metric">
+                <span class="metric-value">50</span>
+                <span class="metric-label">блогеров</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value">10</span>
+                <span class="metric-label">коллабов</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value">$500</span>
+                <span class="metric-label">бюджет</span>
+              </div>
+            </div>
+            <div class="strategy-team">
+              <div class="avatar-xs">LJ</div>
+            </div>
+          </div>
+
+          <div class="strategy-card">
+            <div class="strategy-header">
+              <span class="strategy-status active">Активна</span>
+              <span class="strategy-date">Март 2026</span>
+            </div>
+            <h3>Cisco EA Startup Program</h3>
+            <p>Подготовка документов и питч-дека для подачи в Cisco Entrepreneurs Academy. Дедлайн — конец марта.</p>
+            <div class="strategy-metrics">
+              <div class="metric">
+                <span class="metric-value">1</span>
+                <span class="metric-label">питч-дек</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value">5</span>
+                <span class="metric-label">документов</span>
+              </div>
+            </div>
+            <div class="strategy-team">
+              <div class="avatar-xs">AK</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REPORTS PAGE ===== -->
+      <div class="page" id="page-reports">
+        <div class="page-header">
+          <h1>Отчёты по видео</h1>
+          <button class="btn btn-primary">+ Создать отчёт</button>
+        </div>
+
+        <div class="reports-summary">
+          <div class="report-stat">
+            <span class="report-stat-value">23</span>
+            <span class="report-stat-label">Видео опубликовано</span>
+            <span class="report-stat-change positive">+5 за неделю</span>
+          </div>
+          <div class="report-stat">
+            <span class="report-stat-value">145K</span>
+            <span class="report-stat-label">Всего просмотров</span>
+            <span class="report-stat-change positive">+32%</span>
+          </div>
+          <div class="report-stat">
+            <span class="report-stat-value">4.2%</span>
+            <span class="report-stat-label">Engagement Rate</span>
+            <span class="report-stat-change negative">-0.3%</span>
+          </div>
+          <div class="report-stat">
+            <span class="report-stat-value">1,240</span>
+            <span class="report-stat-label">Новые подписчики</span>
+            <span class="report-stat-change positive">+18%</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Последние видео</h3>
+          <div class="video-reports-list">
+            <div class="video-report-item">
+              <div class="video-thumb"></div>
+              <div class="video-report-info">
+                <h4>5 AI трендов которые взорвут 2026</h4>
+                <span class="video-platform">TikTok</span>
+              </div>
+              <div class="video-report-stats">
+                <span>45.2K просмотров</span>
+                <span>1,230 лайков</span>
+                <span>89 комментариев</span>
+              </div>
+              <span class="video-report-date">23 мар</span>
+            </div>
+            <div class="video-report-item">
+              <div class="video-thumb"></div>
+              <div class="video-report-info">
+                <h4>Как мы построили AI стартап за 2 недели</h4>
+                <span class="video-platform">YouTube Shorts</span>
+              </div>
+              <div class="video-report-stats">
+                <span>28.7K просмотров</span>
+                <span>892 лайков</span>
+                <span>45 комментариев</span>
+              </div>
+              <span class="video-report-date">21 мар</span>
+            </div>
+            <div class="video-report-item">
+              <div class="video-thumb"></div>
+              <div class="video-report-info">
+                <h4>Rizko AI — найди свой тренд</h4>
+                <span class="video-platform">Instagram Reels</span>
+              </div>
+              <div class="video-report-stats">
+                <span>12.1K просмотров</span>
+                <span>456 лайков</span>
+                <span>23 комментария</span>
+              </div>
+              <span class="video-report-date">19 мар</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== AI CHAT PAGE ===== -->
+      <div class="page" id="page-ai-chat">
+        <div class="chat-layout">
+          <div class="chat-sidebar">
+            <button class="btn btn-primary btn-full">+ Новый чат</button>
+            <div class="chat-history">
+              <div class="chat-history-item active">
+                <span class="chat-history-title">Анализ трендов марта</span>
+                <span class="chat-history-date">Сегодня</span>
+              </div>
+              <div class="chat-history-item">
+                <span class="chat-history-title">Стратегия контента Q2</span>
+                <span class="chat-history-date">Вчера</span>
+              </div>
+              <div class="chat-history-item">
+                <span class="chat-history-title">Конкуренты в нише</span>
+                <span class="chat-history-date">22 мар</span>
+              </div>
+              <div class="chat-history-item">
+                <span class="chat-history-title">Сценарий для TikTok</span>
+                <span class="chat-history-date">20 мар</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-main">
+            <div class="chat-messages">
+              <div class="chat-message assistant">
+                <div class="chat-avatar">AI</div>
+                <div class="chat-bubble">
+                  <p>Привет! Я помогу тебе с анализом трендов, стратегиями и данными Rizko AI. Что хочешь узнать?</p>
+                </div>
+              </div>
+              <div class="chat-message user">
+                <div class="chat-bubble">
+                  <p>Какие тренды сейчас на TikTok в нише AI/tech?</p>
+                </div>
+                <div class="chat-avatar">AK</div>
+              </div>
+              <div class="chat-message assistant">
+                <div class="chat-avatar">AI</div>
+                <div class="chat-bubble">
+                  <p>Вот топ-3 тренда в AI/tech на TikTok за эту неделю:</p>
+                  <ol>
+                    <li><strong>"AI делает за меня..."</strong> — формат до/после, 2.3M просмотров в среднем</li>
+                    <li><strong>"Мой AI стартап"</strong> — дневники стартаперов, растёт +45% за неделю</li>
+                    <li><strong>"ChatGPT лайфхаки"</strong> — практические советы, стабильно 500K+ просмотров</li>
+                  </ol>
+                  <p>Хочешь, чтобы я подготовил сценарии под эти тренды?</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-input-area">
+              <div class="chat-input-wrap">
+                <textarea placeholder="Спроси что-нибудь..." rows="1"></textarea>
+                <button class="btn btn-primary btn-send">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+              <span class="chat-hint">AI имеет доступ к данным Rizko: тренды, контакты, задачи, отчёты</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TEAM PAGE ===== -->
+      <div class="page" id="page-team">
+        <div class="page-header">
+          <h1>Команда</h1>
+          <div class="header-right-actions">
+            <select class="filter-search" id="teamPeriod">
+              <option>Эта неделя</option>
+              <option>Прошлая неделя</option>
+              <option selected>Март 2026</option>
+              <option>Февраль 2026</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Team Status Cards -->
+        <div class="team-status-grid">
+          <div class="team-member-card online">
+            <div class="member-header">
+              <div class="avatar-sm member-avatar">AK</div>
+              <div class="member-info">
+                <span class="member-name">Akyl</span>
+                <span class="member-role-tag">Founder / Dev</span>
+              </div>
+              <span class="online-badge">Online</span>
+            </div>
+            <div class="member-timer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="timer-value" id="timer-akyl">04:32:15</span>
+              <button class="btn btn-sm btn-stop" onclick="toggleTimer('akyl')">Пауза</button>
+            </div>
+            <div class="member-stats-row">
+              <div class="member-stat">
+                <span class="member-stat-val">142 ч</span>
+                <span class="member-stat-lbl">За месяц</span>
+              </div>
+              <div class="member-stat">
+                <span class="member-stat-val">$2,840</span>
+                <span class="member-stat-lbl">Заработано</span>
+              </div>
+              <div class="member-stat">
+                <span class="member-stat-val">$20/ч</span>
+                <span class="member-stat-lbl">Ставка</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-member-card online">
+            <div class="member-header">
+              <div class="avatar-sm member-avatar">LJ</div>
+              <div class="member-info">
+                <span class="member-name">Lujan</span>
+                <span class="member-role-tag">Marketing</span>
+              </div>
+              <span class="online-badge">Online</span>
+            </div>
+            <div class="member-timer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="timer-value" id="timer-lujan">02:17:43</span>
+              <button class="btn btn-sm btn-stop" onclick="toggleTimer('lujan')">Пауза</button>
+            </div>
+            <div class="member-stats-row">
+              <div class="member-stat">
+                <span class="member-stat-val">98 ч</span>
+                <span class="member-stat-lbl">За месяц</span>
+              </div>
+              <div class="member-stat">
+                <span class="member-stat-val">$1,470</span>
+                <span class="member-stat-lbl">Заработано</span>
+              </div>
+              <div class="member-stat">
+                <span class="member-stat-val">$15/ч</span>
+                <span class="member-stat-lbl">Ставка</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-member-card">
+            <div class="member-header">
+              <div class="avatar-sm member-avatar">ND</div>
+              <div class="member-info">
+                <span class="member-name">Нурдос</span>
+                <span class="member-role-tag">Content Creator</span>
+              </div>
+              <span class="offline-badge">Offline</span>
+            </div>
+            <div class="member-timer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="timer-value off">00:00:00</span>
+              <button class="btn btn-sm btn-start" onclick="toggleTimer('nurdos')">Начать</button>
+            </div>
+            <div class="member-stats-row">
+              <div class="member-stat">
+                <span class="member-stat-val">64 ч</span>
+                <span class="member-stat-lbl">За месяц</span>
+              </div>
+              <div class="member-stat">
+                <span class="member-stat-val">$640</span>
+                <span class="member-stat-lbl">Заработано</span>
+              </div>
+              <div class="member-stat">
+                <span class="member-stat-val">$10/ч</span>
+                <span class="member-stat-lbl">Ставка</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-member-card">
+            <div class="member-header">
+              <div class="avatar-sm member-avatar">+</div>
+              <div class="member-info">
+                <span class="member-name add-member">Добавить сотрудника</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="team-summary">
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">304 ч</span>
+              <span class="stat-label">Всего часов (март)</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">$4,950</span>
+              <span class="stat-label">Всего к выплате</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">3</span>
+              <span class="stat-label">Человек в команде</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">7.2 ч</span>
+              <span class="stat-label">Среднее в день</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Chart -->
+        <div class="card" style="margin-top: 24px;">
+          <h3 class="card-title">График работы — Март 2026</h3>
+          <div class="chart-container">
+            <div class="chart-bar-group">
+              <span class="chart-day">Пн 17</span>
+              <div class="chart-bars">
+                <div class="chart-bar akyl" style="height: 80%;" title="Akyl: 8ч"></div>
+                <div class="chart-bar lujan" style="height: 60%;" title="Lujan: 6ч"></div>
+                <div class="chart-bar nurdos" style="height: 40%;" title="Нурдос: 4ч"></div>
+              </div>
+            </div>
+            <div class="chart-bar-group">
+              <span class="chart-day">Вт 18</span>
+              <div class="chart-bars">
+                <div class="chart-bar akyl" style="height: 90%;" title="Akyl: 9ч"></div>
+                <div class="chart-bar lujan" style="height: 70%;" title="Lujan: 7ч"></div>
+                <div class="chart-bar nurdos" style="height: 50%;" title="Нурдос: 5ч"></div>
+              </div>
+            </div>
+            <div class="chart-bar-group">
+              <span class="chart-day">Ср 19</span>
+              <div class="chart-bars">
+                <div class="chart-bar akyl" style="height: 70%;" title="Akyl: 7ч"></div>
+                <div class="chart-bar lujan" style="height: 80%;" title="Lujan: 8ч"></div>
+                <div class="chart-bar nurdos" style="height: 30%;" title="Нурдос: 3ч"></div>
+              </div>
+            </div>
+            <div class="chart-bar-group">
+              <span class="chart-day">Чт 20</span>
+              <div class="chart-bars">
+                <div class="chart-bar akyl" style="height: 85%;" title="Akyl: 8.5ч"></div>
+                <div class="chart-bar lujan" style="height: 50%;" title="Lujan: 5ч"></div>
+                <div class="chart-bar nurdos" style="height: 60%;" title="Нурдос: 6ч"></div>
+              </div>
+            </div>
+            <div class="chart-bar-group">
+              <span class="chart-day">Пт 21</span>
+              <div class="chart-bars">
+                <div class="chart-bar akyl" style="height: 60%;" title="Akyl: 6ч"></div>
+                <div class="chart-bar lujan" style="height: 40%;" title="Lujan: 4ч"></div>
+                <div class="chart-bar nurdos" style="height: 70%;" title="Нурдос: 7ч"></div>
+              </div>
+            </div>
+            <div class="chart-bar-group">
+              <span class="chart-day">Сб 22</span>
+              <div class="chart-bars">
+                <div class="chart-bar akyl" style="height: 30%;" title="Akyl: 3ч"></div>
+                <div class="chart-bar lujan" style="height: 0%;" title="Lujan: 0ч"></div>
+                <div class="chart-bar nurdos" style="height: 0%;" title="Нурдос: 0ч"></div>
+              </div>
+            </div>
+            <div class="chart-bar-group">
+              <span class="chart-day">Вс 23</span>
+              <div class="chart-bars">
+                <div class="chart-bar akyl" style="height: 20%;" title="Akyl: 2ч"></div>
+                <div class="chart-bar lujan" style="height: 0%;" title="Lujan: 0ч"></div>
+                <div class="chart-bar nurdos" style="height: 0%;" title="Нурдос: 0ч"></div>
+              </div>
+            </div>
+            <div class="chart-bar-group today">
+              <span class="chart-day">Пн 24</span>
+              <div class="chart-bars">
+                <div class="chart-bar akyl" style="height: 45%;" title="Akyl: 4.5ч"></div>
+                <div class="chart-bar lujan" style="height: 25%;" title="Lujan: 2.5ч"></div>
+                <div class="chart-bar nurdos" style="height: 0%;" title="Нурдос: 0ч"></div>
+              </div>
+            </div>
+            <div class="chart-bar-group today">
+              <span class="chart-day">Вт 25</span>
+              <div class="chart-bars">
+                <div class="chart-bar akyl active-bar" style="height: 45%;" title="Akyl: сейчас"></div>
+                <div class="chart-bar lujan active-bar" style="height: 22%;" title="Lujan: сейчас"></div>
+                <div class="chart-bar nurdos" style="height: 0%;" title="Нурдос: —"></div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item"><span class="legend-dot akyl"></span> Akyl</div>
+            <div class="legend-item"><span class="legend-dot lujan"></span> Lujan</div>
+            <div class="legend-item"><span class="legend-dot nurdos"></span> Нурдос</div>
+          </div>
+        </div>
+
+        <!-- Time Log Table -->
+        <div class="card" style="margin-top: 16px;">
+          <h3 class="card-title">Журнал рабочего времени</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Сотрудник</th>
+                  <th>Дата</th>
+                  <th>Начало</th>
+                  <th>Конец</th>
+                  <th>Часы</th>
+                  <th>Заработок</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="contact-cell"><div class="avatar-sm">AK</div><span>Akyl</span></div></td>
+                  <td>25 мар</td>
+                  <td>09:15</td>
+                  <td><span class="status-dot active"></span> сейчас</td>
+                  <td>4ч 32м</td>
+                  <td>$90.67</td>
+                </tr>
+                <tr>
+                  <td><div class="contact-cell"><div class="avatar-sm">LJ</div><span>Lujan</span></div></td>
+                  <td>25 мар</td>
+                  <td>11:30</td>
+                  <td><span class="status-dot active"></span> сейчас</td>
+                  <td>2ч 17м</td>
+                  <td>$34.25</td>
+                </tr>
+                <tr>
+                  <td><div class="contact-cell"><div class="avatar-sm">AK</div><span>Akyl</span></div></td>
+                  <td>24 мар</td>
+                  <td>08:45</td>
+                  <td>17:30</td>
+                  <td>8ч 45м</td>
+                  <td>$175.00</td>
+                </tr>
+                <tr>
+                  <td><div class="contact-cell"><div class="avatar-sm">LJ</div><span>Lujan</span></div></td>
+                  <td>24 мар</td>
+                  <td>10:00</td>
+                  <td>16:15</td>
+                  <td>6ч 15м</td>
+                  <td>$93.75</td>
+                </tr>
+                <tr>
+                  <td><div class="contact-cell"><div class="avatar-sm">ND</div><span>Нурдос</span></div></td>
+                  <td>24 мар</td>
+                  <td>12:00</td>
+                  <td>18:00</td>
+                  <td>6ч 00м</td>
+                  <td>$60.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CALENDAR PAGE ===== -->
+      <div class="page" id="page-calendar">
+        <div class="page-header">
+          <h1>Контент-календарь</h1>
+          <div class="header-right-actions">
+            <button class="btn btn-secondary" id="calPrev">&larr;</button>
+            <span class="cal-month-label">Март 2026</span>
+            <button class="btn btn-secondary" id="calNext">&rarr;</button>
+            <button class="btn btn-primary" onclick="openModal('contentModal')">+ Добавить пост</button>
+          </div>
+        </div>
+
+        <!-- Status Pipeline -->
+        <div class="pipeline-bar">
+          <div class="pipeline-step">
+            <span class="pipeline-dot idea"></span>
+            <span>Идея <strong>4</strong></span>
+          </div>
+          <div class="pipeline-arrow">&rarr;</div>
+          <div class="pipeline-step">
+            <span class="pipeline-dot filming"></span>
+            <span>Снято <strong>2</strong></span>
+          </div>
+          <div class="pipeline-arrow">&rarr;</div>
+          <div class="pipeline-step">
+            <span class="pipeline-dot editing"></span>
+            <span>Монтаж <strong>1</strong></span>
+          </div>
+          <div class="pipeline-arrow">&rarr;</div>
+          <div class="pipeline-step">
+            <span class="pipeline-dot published"></span>
+            <span>Опубликовано <strong>8</strong></span>
+          </div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="calendar-grid">
+          <div class="cal-header">Пн</div>
+          <div class="cal-header">Вт</div>
+          <div class="cal-header">Ср</div>
+          <div class="cal-header">Чт</div>
+          <div class="cal-header">Пт</div>
+          <div class="cal-header">Сб</div>
+          <div class="cal-header">Вс</div>
+
+          <!-- Week 4: Mar 23-29 -->
+          <div class="cal-day past">
+            <span class="cal-date">23</span>
+            <div class="cal-post published">
+              <span class="cal-post-platform">TikTok</span>
+              <span class="cal-post-title">5 AI трендов 2026</span>
+              <span class="cal-post-assignee">AK</span>
+            </div>
+          </div>
+          <div class="cal-day past">
+            <span class="cal-date">24</span>
+          </div>
+          <div class="cal-day today">
+            <span class="cal-date">25</span>
+            <div class="cal-post filming">
+              <span class="cal-post-platform">Reels</span>
+              <span class="cal-post-title">Behind the scenes Rizko</span>
+              <span class="cal-post-assignee">LJ</span>
+            </div>
+            <div class="cal-post idea">
+              <span class="cal-post-platform">TikTok</span>
+              <span class="cal-post-title">AI стартап дневник #3</span>
+              <span class="cal-post-assignee">AK</span>
+            </div>
+          </div>
+          <div class="cal-day">
+            <span class="cal-date">26</span>
+            <div class="cal-post idea">
+              <span class="cal-post-platform">YouTube</span>
+              <span class="cal-post-title">Как мы нашли Product-Market Fit</span>
+              <span class="cal-post-assignee">AK</span>
+            </div>
+          </div>
+          <div class="cal-day">
+            <span class="cal-date">27</span>
+            <div class="cal-post editing">
+              <span class="cal-post-platform">TikTok</span>
+              <span class="cal-post-title">AI vs человек: кто лучше</span>
+              <span class="cal-post-assignee">ND</span>
+            </div>
+          </div>
+          <div class="cal-day weekend">
+            <span class="cal-date">28</span>
+          </div>
+          <div class="cal-day weekend">
+            <span class="cal-date">29</span>
+          </div>
+
+          <!-- Week 5: Mar 30 - Apr 5 -->
+          <div class="cal-day">
+            <span class="cal-date">30</span>
+            <div class="cal-post idea">
+              <span class="cal-post-platform">Reels</span>
+              <span class="cal-post-title">Топ-3 ниши для TikTok</span>
+              <span class="cal-post-assignee">LJ</span>
+            </div>
+          </div>
+          <div class="cal-day">
+            <span class="cal-date">31</span>
+            <div class="cal-post idea">
+              <span class="cal-post-platform">TikTok</span>
+              <span class="cal-post-title">Rizko AI demo видео</span>
+              <span class="cal-post-assignee">AK</span>
+            </div>
+          </div>
+          <div class="cal-day next-month"><span class="cal-date">1 апр</span></div>
+          <div class="cal-day next-month"><span class="cal-date">2</span></div>
+          <div class="cal-day next-month"><span class="cal-date">3</span></div>
+          <div class="cal-day next-month weekend"><span class="cal-date">4</span></div>
+          <div class="cal-day next-month weekend"><span class="cal-date">5</span></div>
+        </div>
+      </div>
+
+      <!-- ===== SCRIPTS PAGE ===== -->
+      <div class="page" id="page-scripts">
+        <div class="page-header">
+          <h1>Скрипт-банк</h1>
+          <button class="btn btn-primary">+ Новый скрипт</button>
+        </div>
+
+        <div class="filters-bar">
+          <div class="filter-tabs">
+            <button class="filter-tab active">Все</button>
+            <button class="filter-tab">AI/Tech</button>
+            <button class="filter-tab">Стартап</button>
+            <button class="filter-tab">Маркетинг</button>
+            <button class="filter-tab">Лайфстайл</button>
+          </div>
+          <input type="text" class="filter-search" placeholder="Поиск скриптов..." />
+        </div>
+
+        <div class="scripts-grid">
+          <div class="script-card">
+            <div class="script-header">
+              <span class="badge-tag dev">AI/Tech</span>
+              <span class="script-platform">TikTok</span>
+              <span class="script-date">24 мар</span>
+            </div>
+            <h4 class="script-title">5 AI инструментов которые заменят тебе команду</h4>
+            <p class="script-preview">Хук: "Ты до сих пор платишь дизайнеру $500 в месяц?" Переход: показываем 5 AI сервисов с демо. CTA: подписка + комментарий...</p>
+            <div class="script-footer">
+              <div class="script-tags">
+                <span class="script-tag">#ai</span>
+                <span class="script-tag">#tools</span>
+                <span class="script-tag">#бизнес</span>
+              </div>
+              <div class="script-meta">
+                <span title="Использовано">2x</span>
+                <div class="avatar-xs">AK</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="script-card">
+            <div class="script-header">
+              <span class="badge-tag marketing">Стартап</span>
+              <span class="script-platform">YouTube Shorts</span>
+              <span class="script-date">22 мар</span>
+            </div>
+            <h4 class="script-title">Мы построили AI стартап за 2 недели — вот что вышло</h4>
+            <p class="script-preview">Хук: "2 недели назад у нас была только идея." Показываем путь: идея → прототип → MVP → первые юзеры. Честно о провалах...</p>
+            <div class="script-footer">
+              <div class="script-tags">
+                <span class="script-tag">#стартап</span>
+                <span class="script-tag">#buildinpublic</span>
+              </div>
+              <div class="script-meta">
+                <span title="Использовано">1x</span>
+                <div class="avatar-xs">AK</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="script-card">
+            <div class="script-header">
+              <span class="badge-tag blogger">Маркетинг</span>
+              <span class="script-platform">Reels</span>
+              <span class="script-date">20 мар</span>
+            </div>
+            <h4 class="script-title">Как набрать первые 10K на TikTok в 2026</h4>
+            <p class="script-preview">Хук: "Забудь всё что знал о TikTok." 3 новых правила алгоритма. Каждое правило = отдельный кадр с демонстрацией...</p>
+            <div class="script-footer">
+              <div class="script-tags">
+                <span class="script-tag">#tiktok</span>
+                <span class="script-tag">#рост</span>
+                <span class="script-tag">#smm</span>
+              </div>
+              <div class="script-meta">
+                <span title="Использовано">0x</span>
+                <div class="avatar-xs">LJ</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="script-card">
+            <div class="script-header">
+              <span class="badge-tag dev">AI/Tech</span>
+              <span class="script-platform">TikTok</span>
+              <span class="script-date">18 мар</span>
+            </div>
+            <h4 class="script-title">ChatGPT делает мою работу за 10 секунд</h4>
+            <p class="script-preview">Формат до/после. Показываем задачу, ставим таймер. ChatGPT решает. "А теперь угадай сколько это стоило..."</p>
+            <div class="script-footer">
+              <div class="script-tags">
+                <span class="script-tag">#chatgpt</span>
+                <span class="script-tag">#продуктивность</span>
+              </div>
+              <div class="script-meta">
+                <span title="Использовано">3x</span>
+                <div class="avatar-xs">AK</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="script-card">
+            <div class="script-header">
+              <span class="badge-tag partner">Лайфстайл</span>
+              <span class="script-platform">TikTok</span>
+              <span class="script-date">15 мар</span>
+            </div>
+            <h4 class="script-title">День из жизни основателя AI стартапа в Турции</h4>
+            <p class="script-preview">VLOG формат: утро, кофе, код, митинг с командой, обед, баги, вечерний рефлекшн. Музыка: lo-fi. Субтитры на русском...</p>
+            <div class="script-footer">
+              <div class="script-tags">
+                <span class="script-tag">#vlog</span>
+                <span class="script-tag">#стартап</span>
+                <span class="script-tag">#турция</span>
+              </div>
+              <div class="script-meta">
+                <span title="Использовано">1x</span>
+                <div class="avatar-xs">AK</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== WIKI PAGE ===== -->
+      <div class="page" id="page-wiki">
+        <div class="page-header">
+          <h1>Wiki / База знаний</h1>
+          <button class="btn btn-primary">+ Новая статья</button>
+        </div>
+
+        <div class="wiki-layout">
+          <div class="wiki-sidebar-nav">
+            <div class="wiki-category">
+              <h4 class="wiki-cat-title">Брендбук</h4>
+              <a class="wiki-link active">Tone of Voice</a>
+              <a class="wiki-link">Логотип и цвета</a>
+              <a class="wiki-link">Шаблоны</a>
+            </div>
+            <div class="wiki-category">
+              <h4 class="wiki-cat-title">Гайды по съёмке</h4>
+              <a class="wiki-link">Как снимать TikTok</a>
+              <a class="wiki-link">Настройка света</a>
+              <a class="wiki-link">Монтаж в CapCut</a>
+            </div>
+            <div class="wiki-category">
+              <h4 class="wiki-cat-title">Процессы</h4>
+              <a class="wiki-link">Онбординг нового члена</a>
+              <a class="wiki-link">Пайплайн контента</a>
+              <a class="wiki-link">Правила работы</a>
+            </div>
+          </div>
+
+          <div class="wiki-content">
+            <div class="wiki-article">
+              <div class="wiki-article-header">
+                <h2>Tone of Voice — Rizko AI</h2>
+                <div class="wiki-meta">
+                  <span>Обновлено: 20 мар 2026</span>
+                  <span>Автор: Akyl</span>
+                </div>
+              </div>
+              <div class="wiki-body">
+                <h3>Кто мы</h3>
+                <p>Мы — AI-стартап который помогает контент-мейкерам находить тренды и создавать вирусный контент. Наш тон — дружеский, экспертный, без воды.</p>
+
+                <h3>Правила</h3>
+                <ul>
+                  <li><strong>Простой язык</strong> — пишем как говорим, без корпоративного буллшита</li>
+                  <li><strong>Конкретика</strong> — цифры, примеры, кейсы. Без "революционный" и "уникальный"</li>
+                  <li><strong>Энергия</strong> — мы стартап, мы быстрые, мы горим идеей</li>
+                  <li><strong>Честность</strong> — если что-то не работает, говорим прямо</li>
+                </ul>
+
+                <h3>Примеры</h3>
+                <div class="wiki-example good">
+                  <span class="wiki-example-label">Хорошо</span>
+                  <p>"Нашёл 3 тренда за 10 секунд — вот скриншот"</p>
+                </div>
+                <div class="wiki-example bad">
+                  <span class="wiki-example-label">Плохо</span>
+                  <p>"Наш революционный AI-алгоритм анализирует миллионы точек данных"</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FILES PAGE ===== -->
+      <div class="page" id="page-files">
+        <div class="page-header">
+          <h1>Файлы</h1>
+          <button class="btn btn-primary">+ Загрузить</button>
+        </div>
+
+        <div class="files-breadcrumb">
+          <span class="breadcrumb-item active">Все файлы</span>
+        </div>
+
+        <div class="files-grid">
+          <div class="file-folder">
+            <div class="folder-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--primary)" stroke="none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="file-name">Логотипы</span>
+            <span class="file-meta">4 файла</span>
+          </div>
+          <div class="file-folder">
+            <div class="folder-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--orange)" stroke="none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="file-name">Видео-превью</span>
+            <span class="file-meta">12 файлов</span>
+          </div>
+          <div class="file-folder">
+            <div class="folder-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--green)" stroke="none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="file-name">Шаблоны</span>
+            <span class="file-meta">7 файлов</span>
+          </div>
+          <div class="file-folder">
+            <div class="folder-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--purple)" stroke="none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="file-name">Pitch Deck</span>
+            <span class="file-meta">3 файла</span>
+          </div>
+
+          <div class="file-item">
+            <div class="file-icon img">IMG</div>
+            <span class="file-name">rizko-logo-dark.png</span>
+            <span class="file-meta">245 KB &middot; 22 мар</span>
+          </div>
+          <div class="file-item">
+            <div class="file-icon vid">VID</div>
+            <span class="file-name">tiktok-preview-01.mp4</span>
+            <span class="file-meta">8.2 MB &middot; 21 мар</span>
+          </div>
+          <div class="file-item">
+            <div class="file-icon doc">PDF</div>
+            <span class="file-name">pitch-deck-v3.pdf</span>
+            <span class="file-meta">1.4 MB &middot; 20 мар</span>
+          </div>
+          <div class="file-item">
+            <div class="file-icon img">IMG</div>
+            <span class="file-name">brand-guidelines.png</span>
+            <span class="file-meta">890 KB &middot; 18 мар</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FINANCE PAGE ===== -->
+      <div class="page" id="page-finance">
+        <div class="page-header">
+          <h1>Финансы</h1>
+          <button class="btn btn-primary">+ Добавить запись</button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">$2,400</span>
+              <span class="stat-label">Доходы (март)</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red" style="background: rgba(239,68,68,0.15); color: var(--red);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">$6,890</span>
+              <span class="stat-label">Расходы (март)</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">-$4,490</span>
+              <span class="stat-label">Баланс</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">$12,500</span>
+              <span class="stat-label">Бюджет на маркетинг</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget Breakdown -->
+        <div class="dashboard-grid" style="margin-top: 24px;">
+          <div class="card">
+            <h3 class="card-title">Расходы по категориям</h3>
+            <div class="finance-breakdown">
+              <div class="finance-row">
+                <span class="finance-cat">Зарплаты команды</span>
+                <div class="finance-bar-wrap">
+                  <div class="finance-bar" style="width: 72%; background: var(--primary);"></div>
+                </div>
+                <span class="finance-amount">$4,950</span>
+              </div>
+              <div class="finance-row">
+                <span class="finance-cat">Apify (парсинг)</span>
+                <div class="finance-bar-wrap">
+                  <div class="finance-bar" style="width: 15%; background: var(--orange);"></div>
+                </div>
+                <span class="finance-amount">$490</span>
+              </div>
+              <div class="finance-row">
+                <span class="finance-cat">Серверы (Railway)</span>
+                <div class="finance-bar-wrap">
+                  <div class="finance-bar" style="width: 8%; background: var(--green);"></div>
+                </div>
+                <span class="finance-amount">$250</span>
+              </div>
+              <div class="finance-row">
+                <span class="finance-cat">Claude API</span>
+                <div class="finance-bar-wrap">
+                  <div class="finance-bar" style="width: 12%; background: var(--purple);"></div>
+                </div>
+                <span class="finance-amount">$380</span>
+              </div>
+              <div class="finance-row">
+                <span class="finance-cat">Supabase</span>
+                <div class="finance-bar-wrap">
+                  <div class="finance-bar" style="width: 5%; background: var(--blue);"></div>
+                </div>
+                <span class="finance-amount">$25</span>
+              </div>
+              <div class="finance-row">
+                <span class="finance-cat">Реклама</span>
+                <div class="finance-bar-wrap">
+                  <div class="finance-bar" style="width: 20%; background: var(--red);"></div>
+                </div>
+                <span class="finance-amount">$795</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Последние транзакции</h3>
+            <div class="transactions-list">
+              <div class="transaction-item">
+                <div class="transaction-icon expense">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg>
+                </div>
+                <div class="transaction-info">
+                  <span class="transaction-name">Apify — месячная подписка</span>
+                  <span class="transaction-date">25 мар</span>
+                </div>
+                <span class="transaction-amount expense">-$490</span>
+              </div>
+              <div class="transaction-item">
+                <div class="transaction-icon income">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                </div>
+                <div class="transaction-info">
+                  <span class="transaction-name">Бета-подписка — 3 пользователя</span>
+                  <span class="transaction-date">23 мар</span>
+                </div>
+                <span class="transaction-amount income">+$150</span>
+              </div>
+              <div class="transaction-item">
+                <div class="transaction-icon expense">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg>
+                </div>
+                <div class="transaction-info">
+                  <span class="transaction-name">Railway — хостинг</span>
+                  <span class="transaction-date">22 мар</span>
+                </div>
+                <span class="transaction-amount expense">-$250</span>
+              </div>
+              <div class="transaction-item">
+                <div class="transaction-icon expense">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg>
+                </div>
+                <div class="transaction-info">
+                  <span class="transaction-name">Claude API usage</span>
+                  <span class="transaction-date">21 мар</span>
+                </div>
+                <span class="transaction-amount expense">-$380</span>
+              </div>
+              <div class="transaction-item">
+                <div class="transaction-icon income">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                </div>
+                <div class="transaction-info">
+                  <span class="transaction-name">Cisco EA — грант</span>
+                  <span class="transaction-date">15 мар</span>
+                </div>
+                <span class="transaction-amount income">+$2,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== NOTIFICATIONS PAGE ===== -->
+      <div class="page" id="page-notifications">
+        <div class="page-header">
+          <h1>Уведомления</h1>
+          <button class="btn btn-secondary">Прочитать все</button>
+        </div>
+
+        <div class="notif-list">
+          <div class="notif-item unread">
+            <div class="notif-icon task-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg>
+            </div>
+            <div class="notif-content">
+              <p><strong>Дедлайн горит!</strong> Задача "Снять 3 TikTok видео" — дедлайн сегодня</p>
+              <span class="notif-time">5 мин назад</span>
+            </div>
+          </div>
+          <div class="notif-item unread">
+            <div class="notif-icon contact-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div class="notif-content">
+              <p><strong>Lujan</strong> добавил новый контакт: Максим Козлов (Блогер, 50K TikTok)</p>
+              <span class="notif-time">15 мин назад</span>
+            </div>
+          </div>
+          <div class="notif-item unread">
+            <div class="notif-icon team-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="notif-content">
+              <p><strong>Нурдос</strong> зашёл в систему и начал работу</p>
+              <span class="notif-time">1 час назад</span>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-icon money-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="notif-content">
+              <p><strong>Транзакция:</strong> Apify списал $490 за месячную подписку</p>
+              <span class="notif-time">3 часа назад</span>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-icon task-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg>
+            </div>
+            <div class="notif-content">
+              <p><strong>Akyl</strong> завершил задачу "Анализ конкурентов в нише"</p>
+              <span class="notif-time">Вчера, 17:30</span>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-icon ai-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="notif-content">
+              <p><strong>AI</strong> сгенерировал 3 новых скрипта для TikTok</p>
+              <span class="notif-time">Вчера, 14:00</span>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-icon calendar-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+            </div>
+            <div class="notif-content">
+              <p><strong>Напоминание:</strong> Завтра дедлайн — "Связаться с 10 блогерами"</p>
+              <span class="notif-time">Вчера, 09:00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PLATFORMS PAGE ===== -->
+      <div class="page" id="page-platforms">
+        <div class="page-header">
+          <h1>Платформы</h1>
+          <p class="subtitle">Все сервисы и инструменты которые мы используем</p>
+        </div>
+
+        <!-- Категория: Продукт -->
+        <div class="platform-section">
+          <h3 class="platform-section-title">Продукт & Разработка</h3>
+          <div class="platforms-grid">
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #24292e;">GH</div>
+              <div class="platform-info">
+                <span class="platform-name">GitHub</span>
+                <span class="platform-desc">Код, репозитории, CI/CD</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Репо: rizko-ai, rizko-team-portal</span>
+                <span>Аккаунт: akycode08</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #3ecf8e;">SB</div>
+              <div class="platform-info">
+                <span class="platform-name">Supabase</span>
+                <span class="platform-desc">База данных, Auth, Storage</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Проект: rizko-prod</span>
+                <span>PostgreSQL + Auth + Storage</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #0b0d0e;">RW</div>
+              <div class="platform-info">
+                <span class="platform-name">Railway</span>
+                <span class="platform-desc">Хостинг бэкенда (FastAPI)</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Сервис: rizko-api</span>
+                <span>~$250/мес</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #f48120;">CF</div>
+              <div class="platform-info">
+                <span class="platform-name">Cloudflare Pages</span>
+                <span class="platform-desc">Хостинг фронтенда</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Сайт: rizko.ai</span>
+                <span>Free plan</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Категория: AI -->
+        <div class="platform-section">
+          <h3 class="platform-section-title">AI & Данные</h3>
+          <div class="platforms-grid">
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #d4a574;">CL</div>
+              <div class="platform-info">
+                <span class="platform-name">Claude (Anthropic)</span>
+                <span class="platform-desc">AI генерация скриптов, чат</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>API: claude-opus-4-6</span>
+                <span>~$380/мес</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #48b884;">AP</div>
+              <div class="platform-info">
+                <span class="platform-name">Apify</span>
+                <span class="platform-desc">Парсинг TikTok, Instagram, YouTube</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Actors: 5 активных</span>
+                <span>~$490/мес</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #4285f4;">GG</div>
+              <div class="platform-info">
+                <span class="platform-name">Google Gemini</span>
+                <span class="platform-desc">AI анализ, резервный генератор</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>API: gemini-pro</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Категория: Маркетинг & Соцсети -->
+        <div class="platform-section">
+          <h3 class="platform-section-title">Маркетинг & Соцсети</h3>
+          <div class="platforms-grid">
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #000;">TT</div>
+              <div class="platform-info">
+                <span class="platform-name">TikTok</span>
+                <span class="platform-desc">Основной канал контента</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Аккаунт: @rizko.ai</span>
+                <span>OAuth подключён</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);">IG</div>
+              <div class="platform-info">
+                <span class="platform-name">Instagram</span>
+                <span class="platform-desc">Reels, сторис, посты</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Аккаунт: @rizko.ai</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #ff0000;">YT</div>
+              <div class="platform-info">
+                <span class="platform-name">YouTube</span>
+                <span class="platform-desc">Shorts, длинные видео</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Канал: Rizko AI</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card">
+              <div class="platform-icon" style="background: #1da1f2;">TW</div>
+              <div class="platform-info">
+                <span class="platform-name">Twitter / X</span>
+                <span class="platform-desc">Новости, build in public</span>
+              </div>
+              <span class="platform-status inactive">Не подключено</span>
+              <div class="platform-details">
+                <span>Планируется</span>
+              </div>
+              <button class="btn btn-sm btn-start">Подключить</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Категория: Коммуникация -->
+        <div class="platform-section">
+          <h3 class="platform-section-title">Коммуникация & CRM</h3>
+          <div class="platforms-grid">
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #0088cc;">TG</div>
+              <div class="platform-info">
+                <span class="platform-name">Telegram</span>
+                <span class="platform-desc">Чат команды, каналы</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Группа: Rizko Team</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #ff7a59;">HS</div>
+              <div class="platform-info">
+                <span class="platform-name">HubSpot</span>
+                <span class="platform-desc">CRM, контакты, сделки</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Free CRM</span>
+                <span>24 контакта</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #635bff;">ST</div>
+              <div class="platform-info">
+                <span class="platform-name">Stripe</span>
+                <span class="platform-desc">Платежи, подписки</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Test mode</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #000;">RS</div>
+              <div class="platform-info">
+                <span class="platform-name">Resend</span>
+                <span class="platform-desc">Email рассылки, уведомления</span>
+              </div>
+              <span class="platform-status connected">Подключено</span>
+              <div class="platform-details">
+                <span>Домен: rizko.ai</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Категория: Дизайн & Контент -->
+        <div class="platform-section">
+          <h3 class="platform-section-title">Дизайн & Контент</h3>
+          <div class="platforms-grid">
+
+            <div class="platform-card">
+              <div class="platform-icon" style="background: #0acf83;">FG</div>
+              <div class="platform-info">
+                <span class="platform-name">Figma</span>
+                <span class="platform-desc">UI/UX дизайн, прототипы</span>
+              </div>
+              <span class="platform-status inactive">Не подключено</span>
+              <div class="platform-details">
+                <span>Планируется</span>
+              </div>
+              <button class="btn btn-sm btn-start">Подключить</button>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #00c4cc;">CC</div>
+              <div class="platform-info">
+                <span class="platform-name">CapCut</span>
+                <span class="platform-desc">Монтаж видео</span>
+              </div>
+              <span class="platform-status connected">Используем</span>
+              <div class="platform-details">
+                <span>Pro plan</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+            <div class="platform-card connected">
+              <div class="platform-icon" style="background: #00a4e4;">CV</div>
+              <div class="platform-info">
+                <span class="platform-name">Canva</span>
+                <span class="platform-desc">Шаблоны, превью, сторис</span>
+              </div>
+              <span class="platform-status connected">Используем</span>
+              <div class="platform-details">
+                <span>Pro plan</span>
+              </div>
+              <a class="platform-link" href="#">Открыть &rarr;</a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Monthly cost summary -->
+        <div class="card" style="margin-top: 24px;">
+          <h3 class="card-title">Общие расходы на платформы</h3>
+          <div class="platform-costs">
+            <div class="cost-row">
+              <span class="cost-name">Apify</span>
+              <span class="cost-amount">$490/мес</span>
+            </div>
+            <div class="cost-row">
+              <span class="cost-name">Claude API</span>
+              <span class="cost-amount">$380/мес</span>
+            </div>
+            <div class="cost-row">
+              <span class="cost-name">Railway</span>
+              <span class="cost-amount">$250/мес</span>
+            </div>
+            <div class="cost-row">
+              <span class="cost-name">Supabase</span>
+              <span class="cost-amount">$25/мес</span>
+            </div>
+            <div class="cost-row">
+              <span class="cost-name">Cloudflare</span>
+              <span class="cost-amount">Free</span>
+            </div>
+            <div class="cost-row">
+              <span class="cost-name">CapCut Pro</span>
+              <span class="cost-amount">$10/мес</span>
+            </div>
+            <div class="cost-row">
+              <span class="cost-name">Canva Pro</span>
+              <span class="cost-amount">$13/мес</span>
+            </div>
+            <div class="cost-row total">
+              <span class="cost-name">Итого</span>
+              <span class="cost-amount">$1,168/мес</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal: Add Contact -->
+  <div class="modal-overlay" id="contactModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Добавить контакт</h2>
+        <button class="modal-close" onclick="closeModal('contactModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Имя</label>
+          <input type="text" placeholder="Введите имя" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Компания</label>
+            <input type="text" placeholder="Компания" />
+          </div>
+          <div class="form-group">
+            <label>Тип</label>
+            <select>
+              <option>Блогер</option>
+              <option>Инвестор</option>
+              <option>Партнёр</option>
+              <option>Клиент</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="email@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Соцсеть (TikTok / Instagram / YouTube)</label>
+          <input type="text" placeholder="@username" />
+        </div>
+        <div class="form-group">
+          <label>Заметки</label>
+          <textarea placeholder="Заметки о контакте..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('contactModal')">Отмена</button>
+        <button class="btn btn-primary">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add Task -->
+  <div class="modal-overlay" id="taskModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Новая задача</h2>
+        <button class="modal-close" onclick="closeModal('taskModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Название</label>
+          <input type="text" placeholder="Что нужно сделать?" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Категория</label>
+            <select>
+              <option>Маркетинг</option>
+              <option>Контент</option>
+              <option>Outreach</option>
+              <option>Разработка</option>
+              <option>Стратегия</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Приоритет</label>
+            <select>
+              <option>Обычный</option>
+              <option>Срочно</option>
+              <option>Низкий</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Исполнитель</label>
+            <select>
+              <option>Akyl</option>
+              <option>Lujan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Дедлайн</label>
+            <input type="date" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Описание</label>
+          <textarea placeholder="Подробности задачи..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('taskModal')">Отмена</button>
+        <button class="btn btn-primary">Создать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add Content Post -->
+  <div class="modal-overlay" id="contentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Новый пост</h2>
+        <button class="modal-close" onclick="closeModal('contentModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Название</label>
+          <input type="text" placeholder="Заголовок видео" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Платформа</label>
+            <select>
+              <option>TikTok</option>
+              <option>YouTube Shorts</option>
+              <option>Instagram Reels</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Статус</label>
+            <select>
+              <option>Идея</option>
+              <option>Снято</option>
+              <option>Монтаж</option>
+              <option>Опубликовано</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Исполнитель</label>
+            <select>
+              <option>Akyl</option>
+              <option>Lujan</option>
+              <option>Нурдос</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Дата публикации</label>
+            <input type="date" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Описание / скрипт</label>
+          <textarea placeholder="Идея, хук, CTA..." rows="4"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('contentModal')">Отмена</button>
+        <button class="btn btn-primary">Добавить</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
