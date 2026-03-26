@@ -15,7 +15,7 @@ var CONFIG = {
 // Auto-detect: if running locally use localhost, otherwise use Railway backend
 var SERVER_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3000'
-  : 'https://rizko-team-portal-production.up.railway.app';
+  : 'https://rizkoteam-production.up.railway.app';
 
 // Supabase client — CDN creates `var supabase` as library with createClient
 // We replace it with the initialized client instance
