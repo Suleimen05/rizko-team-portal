@@ -4,7 +4,32 @@ const ChatModule = {
   messages: [],
   isStreaming: false,
 
-  SYSTEM_PROMPT: 'Ты — AI-ассистент команды Rizko. Отвечай на русском языке, кратко и по делу. Помогай с маркетингом, контентом, стратегиями и бизнес-задачами.',
+  SYSTEM_PROMPT: 'Ты — AI-ассистент команды Rizko AI. Отвечай на русском языке, кратко и по делу. Помогай с маркетингом, контентом, стратегиями и бизнес-задачами.\n\nУ тебя есть доступ к CRM базе контактов компании. Когда пользователь спрашивает про контакты, клиентов, блогеров, инвесторов, партнёров — используй данные из базы которые приложены ниже. Отвечай конкретно с именами, компаниями, телефонами и городами.',
+
+  // RAG: fetch contacts from Supabase and build context
+  async getContactsContext() {
+    try {
+      const { data, error } = await supabase
+        .from('contacts')
+        .select('name, company, type, email, phone, city, country, source, social_platform, social_username, status, responsible_id, tags, notes, last_contact_date, created_at');
+      if (error) throw error;
+      if (!data || data.length === 0) return '';
+
+      const summary = data.map(c => {
+        const tags = (c.tags || []).join(', ');
+        const statusMap = { active: 'Активный', negotiation: 'Переговоры', closed: 'Закрыт', archived: 'Архив' };
+        const statusLabel = statusMap[c.status] || c.status || 'Новый';
+        const lastContact = c.last_contact_date ? c.last_contact_date.substring(0, 10) : '—';
+        const created = c.created_at ? c.created_at.substring(0, 10) : '—';
+        return `• ${c.name} | ${c.company || '—'} | тип: ${c.type} | email: ${c.email || '—'} | город: ${c.city || '—'} | страна: ${c.country || 'KZ'} | тел: ${c.phone || '—'} | ниши: ${tags} | соцсети: ${c.social_platform || '—'} | username: ${c.social_username || '—'} | лид: ${c.source || '—'} | воронка: ${statusLabel} | посл.контакт: ${lastContact} | добавлен: ${created} | заметки: ${c.notes || '—'}`;
+      }).join('\n');
+
+      return `\n\n=== БАЗА КОНТАКТОВ (${data.length} записей) ===\n${summary}\n=== КОНЕЦ БАЗЫ ===`;
+    } catch (err) {
+      console.error('RAG: failed to load contacts:', err);
+      return '';
+    }
+  },
 
   async init() {
     this.bindEvents();
@@ -14,11 +39,48 @@ const ChatModule = {
     try { await this.loadConversations(); } catch(e) { console.error('Chat load:', e); }
     this.renderConversations();
     if (!this.currentConversation) {
-      const container = document.getElementById('chat-messages');
-      if (container) {
-        container.innerHTML = '<div class="chat-empty">Начните новый чат или выберите существующий</div>';
-      }
+      this.showWelcome();
     }
+  },
+
+  async showWelcome() {
+    const container = document.getElementById('chat-messages');
+    if (!container) return;
+
+    // Load suggestions from Supabase
+    let buttons = '';
+    try {
+      const { data } = await supabase
+        .from('chat_suggestions')
+        .select('emoji, text, prompt')
+        .eq('is_active', true)
+        .order('sort_order');
+      if (data && data.length > 0) {
+        buttons = data.map(s =>
+          `<button class="chat-suggestion-btn" data-prompt="${App.escapeHtml(s.prompt)}">${App.escapeHtml(s.emoji)} ${App.escapeHtml(s.text)}</button>`
+        ).join('');
+      }
+    } catch (e) {
+      console.error('Failed to load suggestions:', e);
+    }
+
+    // Fallback if no suggestions
+    if (!buttons) {
+      buttons = `
+        <button class="chat-suggestion-btn" data-prompt="Найди всех блогеров в Алматы">🔍 Найди блогеров в Алматы</button>
+        <button class="chat-suggestion-btn" data-prompt="Кого привела Ляззат?">👥 Кого привела Ляззат?</button>
+      `;
+    }
+
+    container.innerHTML = `
+      <div class="chat-welcome" id="chat-welcome">
+        <div class="chat-welcome-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h2>Чем могу помочь?</h2>
+        <p class="text-muted">AI-ассистент с доступом к вашей CRM базе контактов</p>
+        <div class="chat-suggestions" id="chat-suggestions">${buttons}</div>
+      </div>`;
   },
 
   bindEvents() {
@@ -50,22 +112,70 @@ const ChatModule = {
       });
     }
 
+    // Chat history — delegation
     const history = document.getElementById('chat-history');
     if (history) {
       history.addEventListener('click', (e) => {
-        const deleteBtn = e.target.closest('.chat-history-delete');
+        // Delete button
+        const deleteBtn = e.target.closest('.chat-hist-delete');
         if (deleteBtn) {
           e.stopPropagation();
-          const convId = deleteBtn.dataset.deleteId;
-          this.deleteConversation(convId);
+          this.deleteConversation(deleteBtn.dataset.id);
           return;
         }
 
+        // Rename button
+        const renameBtn = e.target.closest('.chat-hist-rename');
+        if (renameBtn) {
+          e.stopPropagation();
+          this.renameConversation(renameBtn.dataset.id);
+          return;
+        }
+
+        // Click on item
         const item = e.target.closest('.chat-history-item');
         if (item) {
           const convId = item.dataset.id;
           if (convId !== this.currentConversation) {
             this.loadMessages(convId);
+          }
+        }
+      });
+    }
+
+    // Chat search
+    const chatSearch = document.getElementById('chat-search');
+    if (chatSearch) {
+      chatSearch.addEventListener('input', (e) => {
+        this.searchChats = e.target.value.trim().toLowerCase();
+        this.renderConversations();
+      });
+    }
+
+    // Suggestion buttons + Copy button — delegated on chat-messages container
+    const messagesContainer = document.getElementById('chat-messages');
+    if (messagesContainer) {
+      messagesContainer.addEventListener('click', (e) => {
+        // Suggestion buttons
+        const sugBtn = e.target.closest('.chat-suggestion-btn');
+        if (sugBtn) {
+          const input = document.getElementById('chat-input');
+          if (input) {
+            input.value = sugBtn.dataset.prompt;
+            this.sendMessage();
+          }
+          return;
+        }
+
+        // Copy button
+        const copyBtn = e.target.closest('.chat-copy-btn');
+        if (copyBtn) {
+          const bubble = copyBtn.closest('.chat-message').querySelector('.chat-bubble');
+          if (bubble) {
+            navigator.clipboard.writeText(bubble.innerText).then(() => {
+              copyBtn.textContent = '✓ Скопировано';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Копировать'; }, 2000);
+            });
           }
         }
       });
@@ -147,15 +257,13 @@ const ChatModule = {
       await this.updateConversationTitle(title);
     }
 
-    const apiMessages = [
-      { role: 'system', content: this.SYSTEM_PROMPT },
-      ...this.messages.map(m => ({ role: m.role, content: m.content }))
-    ];
+    // RAG: сервер сам делает поиск по embeddings и добавляет контекст
+    const apiMessages = this.messages.map(m => ({ role: m.role, content: m.content }));
 
-    await this.streamResponse(apiMessages);
+    await this.streamResponse(apiMessages, this.SYSTEM_PROMPT);
   },
 
-  async streamResponse(apiMessages) {
+  async streamResponse(apiMessages, systemPrompt) {
     this.isStreaming = true;
     const sendBtn = document.getElementById('chat-send-btn');
     if (sendBtn) sendBtn.disabled = true;
@@ -171,7 +279,7 @@ const ChatModule = {
           'Authorization': 'Bearer ' + session.access_token,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: apiMessages })
+        body: JSON.stringify({ messages: apiMessages, system_prompt: systemPrompt || '' })
       });
 
       if (!response.ok) {
@@ -254,24 +362,70 @@ const ChatModule = {
     }
   },
 
+  searchChats: '',
+
   renderConversations() {
     const container = document.getElementById('chat-history');
     if (!container) return;
 
-    if (this.conversations.length === 0) {
-      container.innerHTML = '<div class="chat-history-empty">Нет чатов</div>';
+    let convs = this.conversations;
+
+    // Filter by search
+    if (this.searchChats) {
+      convs = convs.filter(c => (c.title || '').toLowerCase().includes(this.searchChats));
+    }
+
+    if (convs.length === 0) {
+      container.innerHTML = '<div class="chat-history-empty">' + (this.searchChats ? 'Ничего не найдено' : 'Нет чатов') + '</div>';
       return;
     }
 
-    container.innerHTML = this.conversations.map(conv => `
-      <div class="chat-history-item ${conv.id === this.currentConversation ? 'active' : ''}" data-id="${conv.id}">
-        <div class="chat-history-title">${App.escapeHtml(conv.title || 'Новый чат')}</div>
-        <div class="chat-history-date">${App.timeAgo(conv.created_at)}</div>
-        <button class="chat-history-delete" data-delete-id="${conv.id}" title="Удалить">&times;</button>
-      </div>
-    `).join('');
+    // Group by date
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+    const weekAgo = new Date(today); weekAgo.setDate(weekAgo.getDate() - 7);
 
-    this.highlightActiveConversation();
+    const groups = { today: [], yesterday: [], week: [], older: [] };
+
+    convs.forEach(conv => {
+      const d = new Date(conv.updated_at || conv.created_at);
+      if (d >= today) groups.today.push(conv);
+      else if (d >= yesterday) groups.yesterday.push(conv);
+      else if (d >= weekAgo) groups.week.push(conv);
+      else groups.older.push(conv);
+    });
+
+    const renderGroup = (label, items) => {
+      if (items.length === 0) return '';
+      return `
+        <div class="chat-history-group">
+          <div class="chat-history-group-label">${label}</div>
+          ${items.map(conv => `
+            <div class="chat-history-item ${conv.id === this.currentConversation ? 'active' : ''}" data-id="${conv.id}">
+              <div class="chat-history-info">
+                <div class="chat-history-title">${App.escapeHtml(conv.title || 'Новый чат')}</div>
+                <div class="chat-history-date">${App.timeAgo(conv.updated_at || conv.created_at)}</div>
+              </div>
+              <div class="chat-history-actions">
+                <button class="chat-history-action-btn chat-hist-rename" data-id="${conv.id}" title="Переименовать">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="chat-history-action-btn delete chat-hist-delete" data-id="${conv.id}" title="Удалить">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    };
+
+    container.innerHTML =
+      renderGroup('Сегодня', groups.today) +
+      renderGroup('Вчера', groups.yesterday) +
+      renderGroup('За неделю', groups.week) +
+      renderGroup('Ранее', groups.older);
   },
 
   renderMessages() {
@@ -279,17 +433,21 @@ const ChatModule = {
     if (!container) return;
 
     if (this.messages.length === 0) {
-      container.innerHTML = '<div class="chat-empty">Начните диалог</div>';
+      this.showWelcome();
       return;
     }
 
     container.innerHTML = this.messages.map(msg => {
       const avatarText = msg.role === 'user' ? this.getUserInitials() : 'AI';
       const formatted = msg.role === 'assistant' ? this.formatMarkdown(msg.content) : '<p>' + App.escapeHtml(msg.content) + '</p>';
+      const copyBtn = msg.role === 'assistant' ? '<div class="chat-msg-actions"><button class="chat-msg-action-btn chat-copy-btn">📋 Копировать</button></div>' : '';
       return `
         <div class="chat-message ${msg.role}">
           <div class="chat-avatar">${avatarText}</div>
-          <div class="chat-bubble">${formatted}</div>
+          <div>
+            <div class="chat-bubble">${formatted}</div>
+            ${copyBtn}
+          </div>
         </div>
       `;
     }).join('');
@@ -301,17 +459,24 @@ const ChatModule = {
     const container = document.getElementById('chat-messages');
     if (!container) return null;
 
+    // Hide welcome & empty
+    const welcome = document.getElementById('chat-welcome');
+    if (welcome) welcome.style.display = 'none';
     const empty = container.querySelector('.chat-empty');
     if (empty) empty.remove();
 
     const avatarText = role === 'user' ? this.getUserInitials() : 'AI';
     const formatted = role === 'assistant' ? content : '<p>' + App.escapeHtml(content) + '</p>';
+    const copyBtn = role === 'assistant' ? '<div class="chat-msg-actions"><button class="chat-msg-action-btn chat-copy-btn">📋 Копировать</button></div>' : '';
 
     const div = document.createElement('div');
     div.className = 'chat-message ' + role;
     div.innerHTML = `
       <div class="chat-avatar">${avatarText}</div>
-      <div class="chat-bubble">${formatted}</div>
+      <div>
+        <div class="chat-bubble">${formatted}</div>
+        ${copyBtn}
+      </div>
     `;
 
     container.appendChild(div);
@@ -408,10 +573,7 @@ const ChatModule = {
       if (this.currentConversation === convId) {
         this.currentConversation = null;
         this.messages = [];
-        const container = document.getElementById('chat-messages');
-        if (container) {
-          container.innerHTML = '<div class="chat-empty">Начните новый чат или выберите существующий</div>';
-        }
+        this.showWelcome();
       }
       this.renderConversations();
       App.showToast('Чат удален', 'success');
@@ -421,14 +583,41 @@ const ChatModule = {
     }
   },
 
-  async updateConversationTitle(title) {
+  async renameConversation(convId) {
+    const conv = this.conversations.find(c => c.id === convId);
+    if (!conv) return;
+    const body = App.formGroup('Название', `<input type="text" id="rename-title" value="${App.escapeHtml(conv.title || '')}" />`);
+    const footer = `
+      <button class="btn btn-secondary" data-action="cancel">Отмена</button>
+      <button class="btn btn-primary" data-action="rename-save">Сохранить</button>
+    `;
+    App.openModal('Переименовать чат', body, footer);
+    setTimeout(() => {
+      const input = document.getElementById('rename-title');
+      if (input) input.focus();
+      const saveBtn = document.querySelector('[data-action="rename-save"]');
+      const cancelBtn = document.querySelector('[data-action="cancel"]');
+      if (saveBtn) saveBtn.addEventListener('click', async () => {
+        const newTitle = document.getElementById('rename-title').value.trim();
+        if (newTitle) {
+          await this.updateConversationTitle(newTitle, convId);
+          App.closeModal();
+          App.showToast('Чат переименован');
+        }
+      });
+      if (cancelBtn) cancelBtn.addEventListener('click', () => App.closeModal());
+    }, 0);
+  },
+
+  async updateConversationTitle(title, convId) {
+    const id = convId || this.currentConversation;
     try {
       await supabase
         .from('chat_conversations')
         .update({ title: title })
-        .eq('id', this.currentConversation);
+        .eq('id', id);
 
-      const conv = this.conversations.find(c => c.id === this.currentConversation);
+      const conv = this.conversations.find(c => c.id === id);
       if (conv) conv.title = title;
       this.renderConversations();
     } catch (err) {

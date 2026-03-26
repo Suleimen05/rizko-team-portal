@@ -1,32 +1,73 @@
-// ===== CONTACTS MODULE =====
+// ===== CONTACTS MODULE (Mock Data + Cards/Table Toggle + Detail View) =====
 
 const ContactsModule = {
   contacts: [],
   members: [],
   filter: 'all',
   searchQuery: '',
-  sortColumn: 'created_at',
-  sortDir: 'desc',
+  viewMode: 'cards', // 'cards' or 'table'
+  selectedContactId: null,
+
+  // ===== MOCK DATA =====
+  mockContacts: [
+    { id: '1', name: 'Роял флауерс', company: 'Роял флауерс', type: 'client', phone: '87760920355', city: 'Тараз', niche: ['цветы'], position: 'админ', lead_source: 'Нурдос', social_platform: 'инста', deal_stage: 'contract', notes: '1 разовая услуга', tags: ['цветы'], interaction_history: [{ date: '2026-03-10', type: 'звонок', note: 'Обсудили условия' }, { date: '2026-03-05', type: 'встреча', note: 'Познакомились' }] },
+    { id: '2', name: 'Аксултан', company: 'Байыпкет', type: 'client', phone: '87766460965', city: 'Алматы', niche: ['маркетинг'], position: 'директор', lead_source: 'Нуркен', social_platform: 'инста, тт', deal_stage: 'contract', notes: 'Ассистент Ляззат', tags: ['маркетинг'], interaction_history: [{ date: '2026-03-20', type: 'звонок', note: 'Подтвердил оплату' }, { date: '2026-03-12', type: 'сообщение', note: 'Отправил КП' }] },
+    { id: '3', name: 'Ермек', company: 'Спонсор', type: 'investor', phone: '87012212888', city: 'Алматы', niche: ['инвестиции'], position: 'инвестор', lead_source: 'Ляззат', social_platform: '', deal_stage: 'meeting', notes: 'Передала данные', tags: ['инвестор'], interaction_history: [{ date: '2026-03-18', type: 'встреча', note: 'Встреча в офисе, обсудили инвестиции' }] },
+    { id: '4', name: 'Улугбек', company: 'Шокан', type: 'client', phone: '87084101568', city: 'Алматы, Астана', niche: ['одежда', 'мода'], position: 'владелец', lead_source: 'Ляззат', social_platform: 'инста, тт', deal_stage: 'contacted', notes: 'Муж одежда, в процессе', tags: ['одежда'], interaction_history: [{ date: '2026-03-22', type: 'сообщение', note: 'Написали в инсту' }] },
+    { id: '5', name: 'Азиз', company: 'Топ клининг сервис', type: 'client', phone: '87717999894', city: 'Алматы, Астана', niche: ['клининг', 'услуги'], position: 'исп директор', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'new', tags: ['клининг'], interaction_history: [] },
+    { id: '6', name: 'Галымжан', company: 'AV clinic', type: 'client', phone: '87027804515', city: 'Алматы', niche: ['стоматология', 'медицина'], position: 'владелец', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'responded', tags: ['медицина'], interaction_history: [{ date: '2026-03-15', type: 'звонок', note: 'Заинтересован в видео-обзоре клиники' }] },
+    { id: '7', name: 'Ершат', company: 'Нур Мубарак', type: 'client', phone: '87010159015', city: 'Алматы', niche: ['образование'], position: 'проректор', lead_source: 'Ляззат', social_platform: 'инста, тт', deal_stage: 'contract', notes: '1 разовая услуга', tags: ['образование'], interaction_history: [{ date: '2026-03-08', type: 'встреча', note: 'Подписали договор' }] },
+    { id: '8', name: 'Женис', company: 'UniTIm', type: 'client', phone: '87772306060', city: 'Алматы, Астана, Шым', niche: ['авто', 'масло'], position: 'директор', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'meeting', tags: ['авто'], interaction_history: [{ date: '2026-03-19', type: 'встреча', note: 'Обсудили серию роликов для моторного масла' }] },
+    { id: '9', name: 'Арман', company: 'АкадемСтрой', type: 'client', phone: '87001999909', city: 'Алматы, Орал, Астана', niche: ['вентиляция', 'строительство'], position: 'директор', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'new', tags: ['строительство'], interaction_history: [] },
+    { id: '10', name: 'Арман', company: 'Best Climat', type: 'client', phone: '87076338581', city: 'Алматы', niche: ['вентиляция', 'строительство'], position: 'директор', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'new', tags: ['строительство'], interaction_history: [] },
+    { id: '11', name: 'Нурия', company: 'Yasin Logistics', type: 'client', phone: '87027888653', city: 'Алматы, Гуанджоу', niche: ['логистика'], position: 'директор', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'contacted', tags: ['логистика'], interaction_history: [{ date: '2026-03-14', type: 'сообщение', note: 'Написали, ждём ответ' }] },
+    { id: '12', name: 'Баха', company: 'Aimauyt Production', type: 'client', phone: '87713731919', city: 'Алматы', niche: ['кино', 'продакшн'], position: 'исп директор', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'responded', tags: ['кино'], interaction_history: [{ date: '2026-03-16', type: 'звонок', note: 'Заинтересован в коллаборации' }] },
+    { id: '13', name: 'Аскар', company: 'Qalan kz', type: 'client', phone: '87081840086', city: 'КЗ, СНГ', niche: ['образование', 'EdTech'], position: 'директор', lead_source: 'Ляззат', social_platform: 'инста, тт', deal_stage: 'meeting', tags: ['образование'], interaction_history: [{ date: '2026-03-21', type: 'встреча', note: 'Обсудили партнёрство по образовательному контенту' }] },
+    { id: '14', name: 'Баха', company: 'Бахапупер', type: 'blogger', phone: '87077078643', city: 'Алматы', niche: ['блогинг', 'развлечения'], position: 'блогер', lead_source: 'Ляззат', social_platform: 'инста, тт', deal_stage: 'contract', tags: ['блогер'], interaction_history: [{ date: '2026-03-20', type: 'встреча', note: 'Договорились о рекламной интеграции' }] },
+    { id: '15', name: 'Азамат', company: 'Карак', type: 'client', phone: '87473389282', city: 'Алматы', niche: ['кофейня', 'общепит'], position: 'директор', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'responded', notes: 'Хочет видео-обзор кофейни, бюджет ~$500', tags: ['общепит'], interaction_history: [{ date: '2026-03-22', type: 'звонок', note: 'Обсудили цену, хочет видео' }, { date: '2026-03-18', type: 'сообщение', note: 'Написал в инсту, ответил' }, { date: '2026-03-10', type: 'встреча', note: 'Познакомились на ивенте' }] },
+    { id: '16', name: 'Дана', company: 'Нму фонд', type: 'partner', phone: '87766760280', city: 'Алматы', niche: ['фонд', 'благотворительность'], position: 'РОМ', lead_source: 'Ляззат', social_platform: 'инста, тт', deal_stage: 'contract', tags: ['фонд'], interaction_history: [{ date: '2026-03-17', type: 'встреча', note: 'Подписали партнёрское соглашение' }] },
+    { id: '17', name: 'Диана', company: 'Сенимгрупп', type: 'client', phone: '87071292700', city: 'Алматы', niche: ['недвижимость'], position: 'директор', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'new', tags: ['недвижимость'], interaction_history: [] },
+    { id: '18', name: 'Владислав', company: 'Fun & Sun', type: 'client', phone: '87777551777', city: 'Алматы', niche: ['туризм', 'путешествия'], position: 'директор', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'contacted', tags: ['туризм'], interaction_history: [{ date: '2026-03-13', type: 'сообщение', note: 'Написали предложение' }] },
+    { id: '19', name: 'Лаура', company: 'Эмирмед', type: 'client', phone: '87476033717', city: 'Алматы', niche: ['медицина', 'мед центр'], position: 'руководитель', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'meeting', tags: ['медицина'], interaction_history: [{ date: '2026-03-23', type: 'встреча', note: 'Обсудили серию видео для клиники' }] },
+    { id: '20', name: 'Нурсултан', company: 'Нео Муслим', type: 'blogger', phone: '87472050312', city: 'Алматы', niche: ['блогинг', 'религия'], position: 'блогер', lead_source: 'Ляззат', social_platform: 'инста, ютуб', deal_stage: 'responded', tags: ['блогер'], interaction_history: [{ date: '2026-03-19', type: 'сообщение', note: 'Ответил, заинтересован' }] },
+    { id: '21', name: 'Даке', company: 'Даке ззз', type: 'blogger', phone: '87021001683', city: 'Алматы', niche: ['блогинг', 'развлечения'], position: 'блогер', lead_source: 'Ляззат', social_platform: 'инста, тт', deal_stage: 'contract', tags: ['блогер'], interaction_history: [{ date: '2026-03-24', type: 'встреча', note: 'Снял контент для нас' }] },
+    { id: '22', name: 'Шынгыс', company: 'Бирге кофе', type: 'client', phone: '87470103410', city: 'Алматы', niche: ['кофейня', 'общепит'], position: 'владелец', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'new', tags: ['общепит'], interaction_history: [] },
+    { id: '23', name: 'Мерей', company: 'КМДБ', type: 'partner', phone: '87471926431', city: 'Астана, Алматы', niche: ['религия', 'муфтият'], position: 'маркетолог', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'meeting', tags: ['религия'], interaction_history: [{ date: '2026-03-20', type: 'встреча', note: 'Обсудили контент-стратегию' }] },
+    { id: '24', name: 'Мадина', company: 'Соул', type: 'client', phone: '87004817381', city: 'Алматы', niche: ['красота', 'салон'], position: 'владелец', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'contacted', tags: ['красота'], interaction_history: [{ date: '2026-03-11', type: 'сообщение', note: 'Написали в директ' }] },
+    { id: '25', name: 'Алишер', company: 'КНБ', type: 'partner', phone: '87760039595', city: 'Алматы', niche: ['госорган'], position: 'КНБ', lead_source: 'Ляззат', social_platform: 'инста', deal_stage: 'responded', tags: ['госорган'], interaction_history: [{ date: '2026-03-09', type: 'звонок', note: 'Обсудили информационное сотрудничество' }] },
+  ],
 
   // ===== LIFECYCLE =====
   async init() {
+    this.contacts = this.mockContacts;
     this.bindEvents();
-    try { await this.loadContacts(); } catch(e) { console.error('Contacts load error:', e); }
+    this.renderContacts();
   },
 
   async onPageEnter() {
-    await this.loadContacts();
+    if (this.contacts.length === 0) this.contacts = this.mockContacts;
+    this.renderContacts();
   },
 
-  // ===== EVENT BINDING (delegated, no inline handlers) =====
+  // ===== EVENT BINDING =====
   bindEvents() {
-    // Add button
     const addBtn = document.getElementById('contacts-add-btn');
-    if (addBtn) {
-      addBtn.addEventListener('click', () => this.showAddModal());
+    if (addBtn) addBtn.addEventListener('click', () => this.showAddModal());
+
+    // View toggle
+    const viewToggle = document.getElementById('contacts-view-toggle');
+    if (viewToggle) {
+      viewToggle.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-view]');
+        if (!btn) return;
+        this.viewMode = btn.dataset.view;
+        viewToggle.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.renderContacts();
+      });
     }
 
-    // Filter tabs — event delegation
+    // Filter tabs
     const filterTabs = document.getElementById('contacts-filter-tabs');
     if (filterTabs) {
       filterTabs.addEventListener('click', (e) => {
@@ -39,7 +80,7 @@ const ContactsModule = {
       });
     }
 
-    // Search — debounced
+    // Search
     const searchInput = document.getElementById('contacts-search');
     if (searchInput) {
       let debounceTimer;
@@ -52,85 +93,126 @@ const ContactsModule = {
       });
     }
 
-    // CSV export
-    const csvBtn = document.getElementById('contacts-export-csv');
-    if (csvBtn) {
-      csvBtn.addEventListener('click', () => this.exportCSV());
+    // Cards container — click delegation
+    const cardsContainer = document.getElementById('contacts-cards-container');
+    if (cardsContainer) {
+      cardsContainer.addEventListener('click', (e) => {
+        const card = e.target.closest('[data-contact-id]');
+        if (card) this.showDetail(card.dataset.contactId);
+      });
     }
 
-    // Excel export
-    const xlsxBtn = document.getElementById('contacts-export-xlsx');
-    if (xlsxBtn) {
-      xlsxBtn.addEventListener('click', () => this.exportExcel());
-    }
-
-    // Column sorting — delegation on thead
+    // Table rows — click delegation
     const tbody = document.getElementById('contacts-tbody');
-    if (tbody && tbody.closest('table')) {
-      const table = tbody.closest('table');
-      const thead = table.querySelector('thead');
-      if (thead) {
-        thead.addEventListener('click', (e) => {
-          const th = e.target.closest('[data-sort]');
-          if (th) this.sortBy(th.dataset.sort);
-        });
-      }
-    }
-
-    // Table row clicks — delegation on tbody
     if (tbody) {
       tbody.addEventListener('click', (e) => {
         const row = e.target.closest('tr[data-contact-id]');
-        if (row) {
-          this.showEditModal(row.dataset.contactId);
-        }
+        if (row) this.showDetail(row.dataset.contactId);
       });
     }
-  },
 
-  // ===== DATA LOADING =====
-  async loadContacts() {
-    try {
-      const { data, error } = await supabase
-        .from('contacts')
-        .select('*, responsible:profiles!responsible_id(id, full_name, initials)')
-        .order(this.sortColumn, { ascending: this.sortDir === 'asc' });
+    // Back button from detail
+    const backBtn = document.getElementById('contacts-back-btn');
+    if (backBtn) backBtn.addEventListener('click', () => this.hideDetail());
 
-      if (error) throw error;
-      this.contacts = data || [];
-      this.members = await App.getTeamMembers();
-      this.renderContacts();
-    } catch (err) {
-      console.error('ContactsModule.loadContacts:', err);
-      App.showToast('Ошибка загрузки контактов', 'error');
-    }
+    // Edit button in detail
+    const editBtn = document.getElementById('contacts-edit-btn');
+    if (editBtn) editBtn.addEventListener('click', () => this.showEditModal(this.selectedContactId));
+
+    // Add interaction button
+    const addInterBtn = document.getElementById('contacts-add-interaction-btn');
+    if (addInterBtn) addInterBtn.addEventListener('click', () => this.showAddInteractionModal());
+
+    // CSV export
+    const csvBtn = document.getElementById('contacts-export-csv');
+    if (csvBtn) csvBtn.addEventListener('click', () => this.exportCSV());
+
+    // Excel export
+    const xlsxBtn = document.getElementById('contacts-export-xlsx');
+    if (xlsxBtn) xlsxBtn.addEventListener('click', () => this.exportExcel());
   },
 
   // ===== FILTERING =====
   getFilteredContacts() {
     let list = this.contacts;
-
     if (this.filter !== 'all') {
       list = list.filter(c => c.type === this.filter);
     }
-
     if (this.searchQuery) {
       const q = this.searchQuery.toLowerCase();
       list = list.filter(c =>
         (c.name || '').toLowerCase().includes(q) ||
         (c.company || '').toLowerCase().includes(q) ||
-        (c.email || '').toLowerCase().includes(q)
+        (c.city || '').toLowerCase().includes(q) ||
+        (c.niche || []).join(' ').toLowerCase().includes(q) ||
+        (c.lead_source || '').toLowerCase().includes(q)
       );
     }
-
     return list;
   },
 
-  // ===== RENDERING =====
+  // ===== RENDER =====
   renderContacts() {
+    if (this.viewMode === 'cards') {
+      this.renderCards();
+    } else {
+      this.renderTable();
+    }
+    // Toggle visibility
+    const cardsEl = document.getElementById('contacts-cards-container');
+    const tableEl = document.getElementById('contacts-table-wrap');
+    if (cardsEl) cardsEl.classList.toggle('hidden', this.viewMode !== 'cards');
+    if (tableEl) tableEl.classList.toggle('hidden', this.viewMode !== 'table');
+  },
+
+  // ===== CARDS RENDER =====
+  renderCards() {
+    const container = document.getElementById('contacts-cards-container');
+    if (!container) return;
+    const list = this.getFilteredContacts();
+
+    if (list.length === 0) {
+      container.innerHTML = '<div class="empty-state"><p class="text-muted">Контакты не найдены</p></div>';
+      return;
+    }
+
+    container.innerHTML = list.map(c => {
+      const stageLabel = this.getDealStageLabel(c.deal_stage);
+      const stageClass = this.getDealStageClass(c.deal_stage);
+      const typeLabel = this.getTypeLabel(c.type);
+      const typeBadgeClass = this.getTypeBadgeClass(c.type);
+      const nicheTags = (c.niche || []).map(n => `<span class="contact-niche-tag">${App.escapeHtml(n)}</span>`).join('');
+      const initials = (c.name || '??').substring(0, 2).toUpperCase();
+
+      return `
+        <div class="contact-card" data-contact-id="${c.id}">
+          <div class="contact-card-top">
+            <div class="contact-card-avatar">${App.escapeHtml(initials)}</div>
+            <div class="contact-card-stage ${stageClass}">${App.escapeHtml(stageLabel)}</div>
+          </div>
+          <div class="contact-card-name">${App.escapeHtml(c.name)}</div>
+          <div class="contact-card-company">${App.escapeHtml(c.company || '')} · ${App.escapeHtml(c.city || '')}</div>
+          <div class="contact-card-meta">
+            <span>📱 ${App.escapeHtml(c.phone || '—')}</span>
+            ${c.social_platform ? `<span>📸 ${App.escapeHtml(c.social_platform)}</span>` : ''}
+          </div>
+          <div class="contact-card-meta">
+            <span>👤 ${App.escapeHtml(c.position || '—')}</span>
+            <span>🔗 ${App.escapeHtml(c.lead_source || '—')}</span>
+          </div>
+          <div class="contact-card-bottom">
+            <span class="badge-tag ${typeBadgeClass}">${App.escapeHtml(typeLabel)}</span>
+            <div class="contact-card-niches">${nicheTags}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  // ===== TABLE RENDER =====
+  renderTable() {
     const tbody = document.getElementById('contacts-tbody');
     if (!tbody) return;
-
     const list = this.getFilteredContacts();
 
     if (list.length === 0) {
@@ -139,266 +221,209 @@ const ContactsModule = {
     }
 
     tbody.innerHTML = list.map(c => {
-      const statusLabel = this.getStatusLabel(c.status);
-      const statusClass = this.getStatusDotClass(c.status);
+      const stageLabel = this.getDealStageLabel(c.deal_stage);
+      const stageClass = this.getDealStageClass(c.deal_stage);
       const typeLabel = this.getTypeLabel(c.type);
       const typeBadgeClass = this.getTypeBadgeClass(c.type);
-      const responsible = c.responsible ? App.escapeHtml(c.responsible.full_name) : '—';
-      const dealStr = c.deal_amount ? App.formatCurrency(c.deal_amount, c.deal_currency) : '—';
-      const initials = (c.name || '??').substring(0, 2).toUpperCase();
+      const niches = (c.niche || []).join(', ');
 
       return `
         <tr data-contact-id="${c.id}">
           <td>
             <div class="contact-cell">
-              <div class="avatar-sm">${App.escapeHtml(initials)}</div>
+              <div class="avatar-sm">${App.escapeHtml((c.name || '??').substring(0, 2).toUpperCase())}</div>
               <div>
                 <div class="kanban-card-title">${App.escapeHtml(c.name)}</div>
                 <div class="text-muted">${App.escapeHtml(c.company || '')}</div>
               </div>
             </div>
           </td>
-          <td><span class="badge-tag ${typeBadgeClass}">${App.escapeHtml(typeLabel)}</span></td>
-          <td>${App.escapeHtml(c.email || '—')}</td>
+          <td>${App.escapeHtml(niches)}</td>
+          <td>${App.escapeHtml(c.city || '—')}</td>
           <td>${App.escapeHtml(c.phone || '—')}</td>
-          <td>
-            <span class="status-dot ${statusClass}"></span>
-            ${App.escapeHtml(statusLabel)}
-          </td>
-          <td>${dealStr}</td>
-          <td>${responsible}</td>
-          <td>${c.last_contact_date ? App.formatDate(c.last_contact_date) : '—'}</td>
+          <td>${App.escapeHtml(c.social_platform || '—')}</td>
+          <td><span class="deal-stage-badge ${stageClass}">${App.escapeHtml(stageLabel)}</span></td>
+          <td>${App.escapeHtml(c.lead_source || '—')}</td>
+          <td><span class="badge-tag ${typeBadgeClass}">${App.escapeHtml(typeLabel)}</span></td>
         </tr>
       `;
     }).join('');
   },
 
-  // ===== STATUS & TYPE HELPERS =====
-  getStatusDotClass(status) {
-    const map = {
-      active: 'active',
-      negotiation: 'pending',
-      closed: 'inactive',
-      archived: 'inactive',
-    };
-    return map[status] || '';
-  },
+  // ===== DETAIL VIEW =====
+  showDetail(id) {
+    const contact = this.contacts.find(c => c.id === id);
+    if (!contact) return;
+    this.selectedContactId = id;
 
-  getStatusLabel(status) {
-    const map = {
-      active: 'Активный',
-      negotiation: 'Переговоры',
-      closed: 'Закрыт',
-      archived: 'Архив',
-    };
-    return map[status] || status || '—';
-  },
+    document.getElementById('contacts-list-view').classList.add('hidden');
+    document.getElementById('contacts-detail-view').classList.remove('hidden');
 
-  getTypeLabel(type) {
-    const map = {
-      blogger: 'Блогер',
-      investor: 'Инвестор',
-      partner: 'Партнёр',
-      client: 'Клиент',
-    };
-    return map[type] || type || '—';
-  },
+    const content = document.getElementById('contact-detail-content');
+    const c = contact;
+    const stageLabel = this.getDealStageLabel(c.deal_stage);
+    const stageClass = this.getDealStageClass(c.deal_stage);
+    const typeLabel = this.getTypeLabel(c.type);
+    const typeBadgeClass = this.getTypeBadgeClass(c.type);
+    const stages = ['new', 'contacted', 'responded', 'meeting', 'contract', 'rejected'];
+    const stageLabels = { new: 'Новый', contacted: 'Написали', responded: 'Ответил', meeting: 'Встреча', contract: 'Договор', rejected: 'Отказ' };
+    const currentStageIdx = stages.indexOf(c.deal_stage);
 
-  getTypeBadgeClass(type) {
-    const map = {
-      blogger: 'blogger',
-      investor: 'investor',
-      partner: 'partner',
-      client: 'client',
-    };
-    return map[type] || '';
-  },
+    const funnelHtml = stages.map((s, i) => {
+      let cls = 'funnel-step';
+      if (s === 'rejected' && c.deal_stage === 'rejected') cls += ' rejected';
+      else if (i <= currentStageIdx && c.deal_stage !== 'rejected') cls += ' active';
+      return `<div class="${cls}"><div class="funnel-dot"></div><div class="funnel-label">${stageLabels[s]}</div></div>`;
+    }).join('<div class="funnel-line"></div>');
 
-  // ===== FORM BUILDER =====
-  buildForm(contact) {
-    const c = contact || {};
-    const tagsStr = (c.tags || []).join(', ');
+    const historyHtml = (c.interaction_history || []).length > 0
+      ? (c.interaction_history || []).map(h => {
+          const icon = h.type === 'звонок' ? '📞' : h.type === 'встреча' ? '🤝' : '💬';
+          return `
+            <div class="interaction-item">
+              <div class="interaction-icon">${icon}</div>
+              <div class="interaction-content">
+                <div class="interaction-date">${App.escapeHtml(h.date)}</div>
+                <div class="interaction-note">${App.escapeHtml(h.note)}</div>
+              </div>
+            </div>
+          `;
+        }).join('')
+      : '<p class="text-muted">Нет записей</p>';
 
-    const typeOptions = App.selectOptions([
-      { value: '', label: '— Выберите —' },
-      { value: 'blogger', label: 'Блогер' },
-      { value: 'investor', label: 'Инвестор' },
-      { value: 'partner', label: 'Партнёр' },
-      { value: 'client', label: 'Клиент' },
-    ], c.type || '');
+    const nicheTags = (c.niche || []).map(n => `<span class="contact-niche-tag">${App.escapeHtml(n)}</span>`).join(' ');
 
-    const statusOptions = App.selectOptions([
-      { value: 'active', label: 'Активный' },
-      { value: 'negotiation', label: 'Переговоры' },
-      { value: 'closed', label: 'Закрыт' },
-      { value: 'archived', label: 'Архив' },
-    ], c.status || 'active');
-
-    const memberOptions = '<option value="">— Не назначен —</option>' +
-      this.members.map(m =>
-        `<option value="${m.id}" ${m.id === c.responsible_id ? 'selected' : ''}>${App.escapeHtml(m.full_name)}</option>`
-      ).join('');
-
-    const currencyOptions = App.selectOptions(
-      Object.keys(CONFIG.currencies).map(k => ({ value: k, label: k + ' (' + CONFIG.currencies[k].symbol + ')' })),
-      c.deal_currency || CONFIG.defaultCurrency
-    );
-
-    const socialPlatformOptions = App.selectOptions([
-      { value: '', label: '— Платформа —' },
-      { value: 'instagram', label: 'Instagram' },
-      { value: 'youtube', label: 'YouTube' },
-      { value: 'tiktok', label: 'TikTok' },
-      { value: 'telegram', label: 'Telegram' },
-      { value: 'twitter', label: 'Twitter/X' },
-      { value: 'facebook', label: 'Facebook' },
-      { value: 'linkedin', label: 'LinkedIn' },
-      { value: 'other', label: 'Другое' },
-    ], c.social_platform || '');
-
-    return `
-      <div class="form-group">
-        <h4 class="text-muted">ОСНОВНАЯ ИНФОРМАЦИЯ</h4>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Имя / Название *</label>
-            <input type="text" id="cf-name" value="${App.escapeHtml(c.name || '')}" placeholder="Полное имя контакта" />
+    content.innerHTML = `
+      <div class="contact-detail-card">
+        <div class="contact-detail-top">
+          <div class="contact-detail-avatar">${App.escapeHtml((c.name || '??').substring(0, 2).toUpperCase())}</div>
+          <div class="contact-detail-info">
+            <h2>${App.escapeHtml(c.name)}</h2>
+            <div class="contact-detail-sub">${App.escapeHtml(c.company || '')} · ${App.escapeHtml((c.niche || []).join(', '))} · ${App.escapeHtml(c.city || '')}</div>
           </div>
-          <div class="form-group">
-            <label>Компания</label>
-            <input type="text" id="cf-company" value="${App.escapeHtml(c.company || '')}" placeholder="Название компании" />
-          </div>
+          <span class="deal-stage-badge ${stageClass}" style="font-size: 14px; padding: 6px 16px;">${App.escapeHtml(stageLabel)}</span>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Тип *</label>
-            <select id="cf-type">${typeOptions}</select>
+
+        <div class="contact-detail-grid">
+          <div class="contact-detail-field">
+            <span class="contact-detail-label">📱 Телефон</span>
+            <span class="contact-detail-value">${App.escapeHtml(c.phone || '—')}</span>
           </div>
-          <div class="form-group">
-            <label>Статус</label>
-            <select id="cf-status">${statusOptions}</select>
+          <div class="contact-detail-field">
+            <span class="contact-detail-label">📸 Соц сети</span>
+            <span class="contact-detail-value">${App.escapeHtml(c.social_platform || '—')}</span>
+          </div>
+          <div class="contact-detail-field">
+            <span class="contact-detail-label">👤 Должность</span>
+            <span class="contact-detail-value">${App.escapeHtml(c.position || '—')}</span>
+          </div>
+          <div class="contact-detail-field">
+            <span class="contact-detail-label">🔗 Привёл</span>
+            <span class="contact-detail-value">${App.escapeHtml(c.lead_source || '—')}</span>
+          </div>
+          <div class="contact-detail-field">
+            <span class="contact-detail-label">🏷️ Тип</span>
+            <span class="badge-tag ${typeBadgeClass}">${App.escapeHtml(typeLabel)}</span>
+          </div>
+          <div class="contact-detail-field">
+            <span class="contact-detail-label">🏷️ Ниши</span>
+            <div>${nicheTags || '—'}</div>
           </div>
         </div>
 
-        <h4 class="text-muted">КОНТАКТЫ</h4>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" id="cf-email" value="${App.escapeHtml(c.email || '')}" placeholder="email@example.com" />
-          </div>
-          <div class="form-group">
-            <label>Телефон</label>
-            <input type="text" id="cf-phone" value="${App.escapeHtml(c.phone || '')}" placeholder="+7 XXX XXX XXXX" />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Город</label>
-            <input type="text" id="cf-city" value="${App.escapeHtml(c.city || '')}" placeholder="Город" />
-          </div>
-          <div class="form-group">
-            <label>Страна</label>
-            <input type="text" id="cf-country" value="${App.escapeHtml(c.country || '')}" placeholder="Страна" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Источник</label>
-          <input type="text" id="cf-source" value="${App.escapeHtml(c.source || '')}" placeholder="Откуда пришёл контакт" />
+        <div class="contact-detail-section">
+          <h3>Воронка</h3>
+          <div class="contact-funnel">${funnelHtml}</div>
         </div>
 
-        <h4 class="text-muted">СОЦСЕТИ</h4>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Платформа</label>
-            <select id="cf-social-platform">${socialPlatformOptions}</select>
-          </div>
-          <div class="form-group">
-            <label>Username</label>
-            <input type="text" id="cf-social-username" value="${App.escapeHtml(c.social_username || '')}" placeholder="@username" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Подписчики</label>
-          <input type="text" id="cf-social-followers" value="${App.escapeHtml(c.social_followers || '')}" placeholder="Кол-во подписчиков" />
+        <div class="contact-detail-section">
+          <h3>История общения</h3>
+          <div class="interaction-list">${historyHtml}</div>
         </div>
 
-        <h4 class="text-muted">СДЕЛКА</h4>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Сумма сделки</label>
-            <input type="number" id="cf-deal-amount" value="${c.deal_amount || ''}" placeholder="0" min="0" step="0.01" />
-          </div>
-          <div class="form-group">
-            <label>Валюта</label>
-            <select id="cf-deal-currency">${currencyOptions}</select>
-          </div>
+        ${c.notes ? `
+        <div class="contact-detail-section">
+          <h3>Заметки</h3>
+          <div class="contact-notes-box">${App.escapeHtml(c.notes)}</div>
         </div>
-
-        <h4 class="text-muted">ДОПОЛНИТЕЛЬНО</h4>
-        <div class="form-group">
-          <label>Ответственный</label>
-          <select id="cf-responsible">${memberOptions}</select>
-        </div>
-        <div class="form-group">
-          <label>Теги</label>
-          <input type="text" id="cf-tags" value="${App.escapeHtml(tagsStr)}" placeholder="Теги через запятую" />
-        </div>
-        <div class="form-group">
-          <label>Дата последнего контакта</label>
-          <input type="date" id="cf-last-contact" value="${c.last_contact_date ? c.last_contact_date.substring(0, 10) : ''}" />
-        </div>
-        <div class="form-group">
-          <label>Заметки</label>
-          <textarea id="cf-notes" rows="3" placeholder="Заметки о контакте...">${App.escapeHtml(c.notes || '')}</textarea>
-        </div>
+        ` : ''}
       </div>
     `;
   },
 
-  // ===== COLLECT FORM DATA =====
-  collectFormData() {
-    const name = document.getElementById('cf-name').value.trim();
-    const type = document.getElementById('cf-type').value;
-
-    if (!name) {
-      App.showToast('Укажите имя контакта', 'error');
-      return null;
-    }
-    if (!type) {
-      App.showToast('Выберите тип контакта', 'error');
-      return null;
-    }
-
-    const tagsRaw = document.getElementById('cf-tags').value.trim();
-    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
-
-    const responsibleId = document.getElementById('cf-responsible').value || null;
-    const dealAmount = parseFloat(document.getElementById('cf-deal-amount').value) || null;
-    const lastContact = document.getElementById('cf-last-contact').value || null;
-
-    return {
-      name,
-      company: document.getElementById('cf-company').value.trim() || null,
-      type,
-      status: document.getElementById('cf-status').value,
-      email: document.getElementById('cf-email').value.trim() || null,
-      phone: document.getElementById('cf-phone').value.trim() || null,
-      city: document.getElementById('cf-city').value.trim() || null,
-      country: document.getElementById('cf-country').value.trim() || null,
-      source: document.getElementById('cf-source').value.trim() || null,
-      social_platform: document.getElementById('cf-social-platform').value || null,
-      social_username: document.getElementById('cf-social-username').value.trim() || null,
-      social_followers: document.getElementById('cf-social-followers').value.trim() || null,
-      deal_amount: dealAmount,
-      deal_currency: document.getElementById('cf-deal-currency').value,
-      responsible_id: responsibleId,
-      tags,
-      notes: document.getElementById('cf-notes').value.trim() || null,
-      last_contact_date: lastContact ? new Date(lastContact).toISOString() : null,
-    };
+  hideDetail() {
+    document.getElementById('contacts-list-view').classList.remove('hidden');
+    document.getElementById('contacts-detail-view').classList.add('hidden');
+    this.selectedContactId = null;
   },
 
-  // ===== MODALS (buttons use addEventListener, not onclick) =====
+  // ===== ADD INTERACTION MODAL =====
+  showAddInteractionModal() {
+    const body = `
+      ${App.formGroup('Тип', `
+        <select id="inter-type">
+          <option value="звонок">📞 Звонок</option>
+          <option value="сообщение">💬 Сообщение</option>
+          <option value="встреча">🤝 Встреча</option>
+        </select>
+      `)}
+      ${App.formGroup('Дата', '<input type="date" id="inter-date" value="' + new Date().toISOString().substring(0, 10) + '" />')}
+      ${App.formGroup('Заметка', '<textarea id="inter-note" rows="3" placeholder="Что обсудили..."></textarea>')}
+    `;
+    const footer = `
+      <button class="btn btn-secondary" data-action="cancel">Отмена</button>
+      <button class="btn btn-primary" data-action="save-inter">Добавить</button>
+    `;
+    App.openModal('Новый контакт с клиентом', body, footer);
+
+    setTimeout(() => {
+      const saveBtn = document.querySelector('[data-action="save-inter"]');
+      const cancelBtn = document.querySelector('[data-action="cancel"]');
+      if (saveBtn) saveBtn.addEventListener('click', () => this.saveInteraction());
+      if (cancelBtn) cancelBtn.addEventListener('click', () => App.closeModal());
+    }, 0);
+  },
+
+  saveInteraction() {
+    const type = document.getElementById('inter-type').value;
+    const date = document.getElementById('inter-date').value;
+    const note = document.getElementById('inter-note').value.trim();
+    if (!note) { App.showToast('Укажите заметку', 'error'); return; }
+
+    const contact = this.contacts.find(c => c.id === this.selectedContactId);
+    if (!contact) return;
+
+    if (!contact.interaction_history) contact.interaction_history = [];
+    contact.interaction_history.unshift({ date, type, note });
+
+    App.closeModal();
+    App.showToast('Контакт добавлен');
+    this.showDetail(this.selectedContactId);
+  },
+
+  // ===== DEAL STAGE HELPERS =====
+  getDealStageLabel(stage) {
+    const map = { new: 'Новый', contacted: 'Написали', responded: 'Ответил', meeting: 'Встреча', contract: 'Договор', rejected: 'Отказ' };
+    return map[stage] || stage || 'Новый';
+  },
+
+  getDealStageClass(stage) {
+    const map = { new: 'stage-new', contacted: 'stage-contacted', responded: 'stage-responded', meeting: 'stage-meeting', contract: 'stage-contract', rejected: 'stage-rejected' };
+    return map[stage] || 'stage-new';
+  },
+
+  // ===== TYPE HELPERS =====
+  getTypeLabel(type) {
+    const map = { blogger: 'Блогер', investor: 'Инвестор', partner: 'Партнёр', client: 'Клиент' };
+    return map[type] || type || '—';
+  },
+
+  getTypeBadgeClass(type) {
+    const map = { blogger: 'blogger', investor: 'investor', partner: 'partner', client: 'client' };
+    return map[type] || '';
+  },
+
+  // ===== MODALS =====
   showAddModal() {
     const body = this.buildForm(null);
     const footer = `
@@ -406,18 +431,17 @@ const ContactsModule = {
       <button class="btn btn-primary" data-action="save">Создать</button>
     `;
     App.openModal('Новый контакт', body, footer);
-
-    // Bind modal footer buttons via delegation
-    this._bindModalFooterActions(null);
+    setTimeout(() => {
+      const saveBtn = document.querySelector('[data-action="save"]');
+      const cancelBtn = document.querySelector('[data-action="cancel"]');
+      if (saveBtn) saveBtn.addEventListener('click', () => this.saveContact(null));
+      if (cancelBtn) cancelBtn.addEventListener('click', () => App.closeModal());
+    }, 0);
   },
 
   showEditModal(id) {
     const contact = this.contacts.find(c => c.id === id);
-    if (!contact) {
-      App.showToast('Контакт не найден', 'error');
-      return;
-    }
-
+    if (!contact) return;
     const body = this.buildForm(contact);
     const footer = `
       <button class="btn btn-danger" data-action="delete">Удалить</button>
@@ -425,218 +449,130 @@ const ContactsModule = {
       <button class="btn btn-primary" data-action="save">Сохранить</button>
     `;
     App.openModal('Редактировать контакт', body, footer);
-
-    this._bindModalFooterActions(id);
-  },
-
-  _bindModalFooterActions(contactId) {
-    // Use setTimeout to ensure modal DOM is ready
     setTimeout(() => {
-      const modal = document.querySelector('.modal-footer, .modal');
-      if (!modal) return;
-
-      // Find all action buttons in the modal
       const saveBtn = document.querySelector('[data-action="save"]');
       const cancelBtn = document.querySelector('[data-action="cancel"]');
       const deleteBtn = document.querySelector('[data-action="delete"]');
-
-      if (saveBtn) {
-        saveBtn.addEventListener('click', () => this.saveContact(contactId));
-      }
-      if (cancelBtn) {
-        cancelBtn.addEventListener('click', () => App.closeModal());
-      }
-      if (deleteBtn) {
-        deleteBtn.addEventListener('click', () => this.deleteContact(contactId));
-      }
+      if (saveBtn) saveBtn.addEventListener('click', () => this.saveContact(id));
+      if (cancelBtn) cancelBtn.addEventListener('click', () => App.closeModal());
+      if (deleteBtn) deleteBtn.addEventListener('click', () => this.deleteContact(id));
     }, 0);
   },
 
-  // ===== CRUD =====
-  async saveContact(id) {
-    const data = this.collectFormData();
-    if (!data) return;
+  buildForm(contact) {
+    const c = contact || {};
+    const typeOptions = App.selectOptions([
+      { value: '', label: '— Выберите —' },
+      { value: 'blogger', label: 'Блогер' },
+      { value: 'investor', label: 'Инвестор' },
+      { value: 'partner', label: 'Партнёр' },
+      { value: 'client', label: 'Клиент' },
+    ], c.type || '');
+    const stageOptions = App.selectOptions([
+      { value: 'new', label: 'Новый' },
+      { value: 'contacted', label: 'Написали' },
+      { value: 'responded', label: 'Ответил' },
+      { value: 'meeting', label: 'Встреча' },
+      { value: 'contract', label: 'Договор' },
+      { value: 'rejected', label: 'Отказ' },
+    ], c.deal_stage || 'new');
 
-    try {
-      if (id) {
-        data.updated_at = new Date().toISOString();
-        const { error } = await supabase.from('contacts').update(data).eq('id', id);
-        if (error) throw error;
-        App.showToast('Контакт обновлён');
-      } else {
-        data.created_by = Auth.userId();
-        const { error } = await supabase.from('contacts').insert(data);
-        if (error) throw error;
-        App.showToast('Контакт создан');
+    return `
+      <div class="form-group">
+        <h4 class="text-muted">ОСНОВНАЯ ИНФОРМАЦИЯ</h4>
+        ${App.formRow(
+          App.formGroup('Имя *', `<input type="text" id="cf-name" value="${App.escapeHtml(c.name || '')}" />`),
+          App.formGroup('Компания', `<input type="text" id="cf-company" value="${App.escapeHtml(c.company || '')}" />`)
+        )}
+        ${App.formRow(
+          App.formGroup('Тип *', `<select id="cf-type">${typeOptions}</select>`),
+          App.formGroup('Воронка', `<select id="cf-stage">${stageOptions}</select>`)
+        )}
+        <h4 class="text-muted">КОНТАКТЫ</h4>
+        ${App.formRow(
+          App.formGroup('Телефон', `<input type="text" id="cf-phone" value="${App.escapeHtml(c.phone || '')}" />`),
+          App.formGroup('Город', `<input type="text" id="cf-city" value="${App.escapeHtml(c.city || '')}" />`)
+        )}
+        ${App.formRow(
+          App.formGroup('Соц сети', `<input type="text" id="cf-social" value="${App.escapeHtml(c.social_platform || '')}" placeholder="инста, тт, ютуб" />`),
+          App.formGroup('Должность', `<input type="text" id="cf-position" value="${App.escapeHtml(c.position || '')}" />`)
+        )}
+        <h4 class="text-muted">ДОПОЛНИТЕЛЬНО</h4>
+        ${App.formRow(
+          App.formGroup('Ниши (через запятую)', `<input type="text" id="cf-niche" value="${App.escapeHtml((c.niche || []).join(', '))}" />`),
+          App.formGroup('Кто привёл (лид)', `<input type="text" id="cf-lead" value="${App.escapeHtml(c.lead_source || '')}" />`)
+        )}
+        ${App.formGroup('Заметки', `<textarea id="cf-notes" rows="3">${App.escapeHtml(c.notes || '')}</textarea>`)}
+      </div>
+    `;
+  },
+
+  saveContact(id) {
+    const name = document.getElementById('cf-name').value.trim();
+    const type = document.getElementById('cf-type').value;
+    if (!name) { App.showToast('Укажите имя', 'error'); return; }
+    if (!type) { App.showToast('Выберите тип', 'error'); return; }
+
+    const nicheRaw = document.getElementById('cf-niche').value.trim();
+    const niche = nicheRaw ? nicheRaw.split(',').map(n => n.trim()).filter(Boolean) : [];
+
+    const data = {
+      name,
+      company: document.getElementById('cf-company').value.trim() || null,
+      type,
+      deal_stage: document.getElementById('cf-stage').value,
+      phone: document.getElementById('cf-phone').value.trim() || null,
+      city: document.getElementById('cf-city').value.trim() || null,
+      social_platform: document.getElementById('cf-social').value.trim() || null,
+      position: document.getElementById('cf-position').value.trim() || null,
+      niche,
+      lead_source: document.getElementById('cf-lead').value.trim() || null,
+      notes: document.getElementById('cf-notes').value.trim() || null,
+      tags: niche,
+    };
+
+    if (id) {
+      const idx = this.contacts.findIndex(c => c.id === id);
+      if (idx !== -1) {
+        this.contacts[idx] = { ...this.contacts[idx], ...data };
       }
-
-      App.closeModal();
-      await this.loadContacts();
-    } catch (err) {
-      console.error('ContactsModule.saveContact:', err);
-      App.showToast('Ошибка сохранения: ' + err.message, 'error');
+      App.showToast('Контакт обновлён');
+    } else {
+      data.id = Date.now().toString();
+      data.interaction_history = [];
+      this.contacts.push(data);
+      App.showToast('Контакт создан');
     }
+
+    App.closeModal();
+    this.renderContacts();
+    if (this.selectedContactId) this.showDetail(this.selectedContactId);
   },
 
   async deleteContact(id) {
-    const confirmed = await App.confirm('Удалить контакт', 'Вы уверены, что хотите удалить этот контакт? Это действие необратимо.');
+    const confirmed = await App.confirm('Удалить контакт', 'Вы уверены?');
     if (!confirmed) return;
-
-    try {
-      const { error } = await supabase.from('contacts').delete().eq('id', id);
-      if (error) throw error;
-      App.showToast('Контакт удалён');
-      App.closeModal();
-      await this.loadContacts();
-    } catch (err) {
-      console.error('ContactsModule.deleteContact:', err);
-      App.showToast('Ошибка удаления: ' + err.message, 'error');
-    }
+    this.contacts = this.contacts.filter(c => c.id !== id);
+    App.closeModal();
+    App.showToast('Контакт удалён');
+    this.hideDetail();
+    this.renderContacts();
   },
 
-  // ===== SORTING =====
-  sortBy(column) {
-    if (this.sortColumn === column) {
-      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortColumn = column;
-      this.sortDir = 'asc';
-    }
-    this.loadContacts();
-  },
-
-  // ===== EXPORT: CSV =====
+  // ===== EXPORT =====
   exportCSV() {
     const list = this.getFilteredContacts();
-    if (list.length === 0) {
-      App.showToast('Нет данных для экспорта', 'error');
-      return;
-    }
-
-    const headers = [
-      'Имя', 'Компания', 'Тип', 'Email', 'Телефон', 'Город', 'Страна',
-      'Источник', 'Соцсеть', 'Username', 'Подписчики', 'Статус',
-      'Сумма сделки', 'Валюта', 'Ответственный', 'Теги', 'Заметки',
-      'Последний контакт', 'Создан',
-    ];
-
-    const rows = list.map(c => [
-      c.name || '',
-      c.company || '',
-      this.getTypeLabel(c.type),
-      c.email || '',
-      c.phone || '',
-      c.city || '',
-      c.country || '',
-      c.source || '',
-      c.social_platform || '',
-      c.social_username || '',
-      c.social_followers || '',
-      this.getStatusLabel(c.status),
-      c.deal_amount || '',
-      c.deal_currency || '',
-      c.responsible ? c.responsible.full_name : '',
-      (c.tags || []).join('; '),
-      c.notes || '',
-      c.last_contact_date ? c.last_contact_date.substring(0, 10) : '',
-      c.created_at ? c.created_at.substring(0, 10) : '',
-    ]);
-
-    const csvContent = '\uFEFF' +
-      [headers, ...rows]
-        .map(row => row.map(cell => {
-          const str = String(cell).replace(/"/g, '""');
-          return '"' + str + '"';
-        }).join(','))
-        .join('\r\n');
-
+    if (list.length === 0) { App.showToast('Нет данных', 'error'); return; }
+    const headers = ['Имя', 'Компания', 'Тип', 'Телефон', 'Город', 'Ниша', 'Должность', 'Соц сети', 'Лид', 'Воронка', 'Заметки'];
+    const rows = list.map(c => [c.name, c.company, this.getTypeLabel(c.type), c.phone, c.city, (c.niche || []).join('; '), c.position, c.social_platform, c.lead_source, this.getDealStageLabel(c.deal_stage), c.notes]);
+    const csvContent = '\uFEFF' + [headers, ...rows].map(row => row.map(cell => '"' + String(cell || '').replace(/"/g, '""') + '"').join(',')).join('\r\n');
     this._downloadFile(csvContent, 'contacts.csv', 'text/csv;charset=utf-8');
   },
 
-  // ===== EXPORT: EXCEL (XML Spreadsheet) =====
   exportExcel() {
-    const list = this.getFilteredContacts();
-    if (list.length === 0) {
-      App.showToast('Нет данных для экспорта', 'error');
-      return;
-    }
-
-    const headers = [
-      'Имя', 'Компания', 'Тип', 'Email', 'Телефон', 'Город', 'Страна',
-      'Источник', 'Соцсеть', 'Username', 'Подписчики', 'Статус',
-      'Сумма сделки', 'Валюта', 'Ответственный', 'Теги', 'Заметки',
-      'Последний контакт', 'Создан',
-    ];
-
-    const escXml = (str) => {
-      return String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-
-    const headerRow = '<Row>' + headers.map(h =>
-      `<Cell ss:StyleID="header"><Data ss:Type="String">${escXml(h)}</Data></Cell>`
-    ).join('') + '</Row>';
-
-    const dataRows = list.map(c => {
-      const values = [
-        { v: c.name, t: 'String' },
-        { v: c.company, t: 'String' },
-        { v: this.getTypeLabel(c.type), t: 'String' },
-        { v: c.email, t: 'String' },
-        { v: c.phone, t: 'String' },
-        { v: c.city, t: 'String' },
-        { v: c.country, t: 'String' },
-        { v: c.source, t: 'String' },
-        { v: c.social_platform, t: 'String' },
-        { v: c.social_username, t: 'String' },
-        { v: c.social_followers, t: 'String' },
-        { v: this.getStatusLabel(c.status), t: 'String' },
-        { v: c.deal_amount, t: 'Number' },
-        { v: c.deal_currency, t: 'String' },
-        { v: c.responsible ? c.responsible.full_name : '', t: 'String' },
-        { v: (c.tags || []).join('; '), t: 'String' },
-        { v: c.notes, t: 'String' },
-        { v: c.last_contact_date ? c.last_contact_date.substring(0, 10) : '', t: 'String' },
-        { v: c.created_at ? c.created_at.substring(0, 10) : '', t: 'String' },
-      ];
-
-      return '<Row>' + values.map(cell => {
-        const val = cell.v != null && cell.v !== '' ? cell.v : '';
-        if (val === '' || val == null) {
-          return '<Cell><Data ss:Type="String"></Data></Cell>';
-        }
-        return `<Cell><Data ss:Type="${cell.t}">${escXml(val)}</Data></Cell>`;
-      }).join('') + '</Row>';
-    }).join('\n');
-
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<?mso-application progid="Excel.Sheet"?>
-<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
-  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
-  <Styles>
-    <Style ss:ID="Default" ss:Name="Normal">
-      <Font ss:FontName="Calibri" ss:Size="11"/>
-    </Style>
-    <Style ss:ID="header">
-      <Font ss:FontName="Calibri" ss:Size="11" ss:Bold="1" ss:Color="#FFFFFF"/>
-      <Interior ss:Color="#4472C4" ss:Pattern="Solid"/>
-    </Style>
-  </Styles>
-  <Worksheet ss:Name="Contacts">
-    <Table>
-      ${headerRow}
-      ${dataRows}
-    </Table>
-  </Worksheet>
-</Workbook>`;
-
-    this._downloadFile(xml, 'contacts.xls', 'application/vnd.ms-excel');
+    App.showToast('Excel экспорт (мок)', 'info');
   },
 
-  // ===== DOWNLOAD HELPER =====
   _downloadFile(content, filename, mimeType) {
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);

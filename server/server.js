@@ -402,52 +402,552 @@ app.post('/api/telegram/send', authMiddleware, async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
-// AI Chat Proxy (hides API key from client)
+// RAG System — Voyage AI Embeddings + pgvector Search + Re-ranking
 // ---------------------------------------------------------------------------
 
-const OPENROUTER_API_KEY = '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';
-const OPENROUTER_MODEL = 'google/gemini-2.5-flash-preview';
+const VOYAGE_API_KEY = 'pa-1D5LwTsiTDx0hv21SdJqsjflSSmRDpXvJe0DKlakFLb';
+const VOYAGE_MODEL = 'voyage-3-lite';
+const ANTHROPIC_API_KEY = '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';
+const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
+
+// --- Chunking functions: convert records to searchable text ---
+
+function chunkContact(c) {
+  const tags = (c.tags || []).join(', ');
+  const text = [
+    `Контакт: ${c.name || ''}`,
+    c.company ? `Компания: ${c.company}` : '',
+    c.type ? `Тип: ${c.type}` : '',
+    c.city ? `Город: ${c.city}` : '',
+    c.country ? `Страна: ${c.country}` : '',
+    c.phone ? `Телефон: ${c.phone}` : '',
+    c.email ? `Email: ${c.email}` : '',
+    c.social_platform ? `Соцсети: ${c.social_platform}` : '',
+    c.social_username ? `Username: ${c.social_username}` : '',
+    tags ? `Ниши: ${tags}` : '',
+    c.source ? `Привёл: ${c.source}` : '',
+    c.status ? `Статус: ${c.status}` : '',
+    c.notes ? `Заметки: ${c.notes}` : '',
+  ].filter(Boolean).join('\n');
+
+  return [{
+    text,
+    metadata: { type: c.type, city: c.city, tags: c.tags, source: c.source, status: c.status }
+  }];
+}
+
+function chunkTask(t) {
+  const text = [
+    `Задача: ${t.title || ''}`,
+    t.description ? `Описание: ${t.description}` : '',
+    t.status ? `Статус: ${t.status}` : '',
+    t.priority ? `Приоритет: ${t.priority}` : '',
+    t.category ? `Категория: ${t.category}` : '',
+    t.due_date ? `Дедлайн: ${t.due_date}` : '',
+  ].filter(Boolean).join('\n');
+
+  return [{ text, metadata: { status: t.status, priority: t.priority, category: t.category } }];
+}
+
+function chunkCalendar(p) {
+  const text = [
+    `Контент: ${p.title || ''}`,
+    p.platform ? `Платформа: ${p.platform}` : '',
+    p.status ? `Статус: ${p.status}` : '',
+    p.scheduled_date ? `Дата: ${p.scheduled_date}` : '',
+    p.description ? `Описание: ${p.description}` : '',
+  ].filter(Boolean).join('\n');
+
+  return [{ text, metadata: { platform: p.platform, status: p.status } }];
+}
+
+function chunkScript(s) {
+  const content = s.content || '';
+  const tags = (s.tags || []).join(', ');
+  const header = [
+    `Скрипт: ${s.title || ''}`,
+    s.category ? `Категория: ${s.category}` : '',
+    s.platform ? `Платформа: ${s.platform}` : '',
+    tags ? `Теги: ${tags}` : '',
+  ].filter(Boolean).join('\n');
+
+  // Multi-chunk for long scripts
+  const chunks = [];
+  const chunkSize = 500;
+  const overlap = 50;
+  if (content.length <= chunkSize) {
+    chunks.push({ text: header + '\n' + content, metadata: { category: s.category, platform: s.platform, tags: s.tags } });
+  } else {
+    for (let i = 0; i < content.length; i += chunkSize - overlap) {
+      const slice = content.substring(i, i + chunkSize);
+      chunks.push({
+        text: (i === 0 ? header + '\n' : `Скрипт: ${s.title} (продолжение)\n`) + slice,
+        metadata: { category: s.category, platform: s.platform, tags: s.tags }
+      });
+    }
+  }
+  return chunks;
+}
+
+function chunkWiki(a, categoryTitle) {
+  const content = a.content || '';
+  const header = `Wiki: ${a.title || ''}\nКатегория: ${categoryTitle || ''}`;
+  const chunks = [];
+  const chunkSize = 500;
+  const overlap = 50;
+
+  if (content.length <= chunkSize) {
+    chunks.push({ text: header + '\n' + content, metadata: { category: categoryTitle } });
+  } else {
+    for (let i = 0; i < content.length; i += chunkSize - overlap) {
+      const slice = content.substring(i, i + chunkSize);
+      chunks.push({
+        text: (i === 0 ? header + '\n' : `Wiki: ${a.title} (продолжение)\n`) + slice,
+        metadata: { category: categoryTitle }
+      });
+    }
+  }
+  return chunks;
+}
+
+function chunkStrategy(s) {
+  const metrics = s.metrics ? JSON.stringify(s.metrics) : '';
+  const text = [
+    `Стратегия: ${s.title || ''}`,
+    s.status ? `Статус: ${s.status}` : '',
+    s.period ? `Период: ${s.period}` : '',
+    s.description ? `Описание: ${s.description}` : '',
+    metrics ? `Метрики: ${metrics}` : '',
+  ].filter(Boolean).join('\n');
+
+  return [{ text, metadata: { status: s.status, period: s.period } }];
+}
+
+// --- Voyage AI: generate embeddings ---
+
+async function generateEmbeddings(texts) {
+  const response = await fetch('https://api.voyageai.com/v1/embeddings', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${VOYAGE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: VOYAGE_MODEL,
+      input: texts,
+      input_type: 'document',
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Voyage API error: ${response.status} ${err}`);
+  }
+
+  const data = await response.json();
+  return data.data.map(d => d.embedding);
+}
+
+async function generateQueryEmbedding(query) {
+  const response = await fetch('https://api.voyageai.com/v1/embeddings', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${VOYAGE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: VOYAGE_MODEL,
+      input: [query],
+      input_type: 'query',
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Voyage API error: ${response.status} ${err}`);
+  }
+
+  const data = await response.json();
+  return data.data[0].embedding;
+}
+
+// --- Re-ranking: keyword overlap ---
+
+function rerank(results, query) {
+  const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+
+  return results.map(r => {
+    const contentLower = r.content_text.toLowerCase();
+    let keywordHits = 0;
+    for (const word of queryWords) {
+      if (contentLower.includes(word)) keywordHits++;
+    }
+    const keywordScore = queryWords.length > 0 ? keywordHits / queryWords.length : 0;
+    const finalScore = 0.7 * r.similarity + 0.3 * keywordScore;
+    return { ...r, final_score: finalScore };
+  }).sort((a, b) => b.final_score - a.final_score);
+}
+
+// --- RAG Endpoints ---
+
+// Full sync: embed all records from all tables
+app.post('/api/rag/sync', authMiddleware, async (req, res) => {
+  try {
+    const startTime = Date.now();
+    const stats = { total: 0, created: 0, updated: 0, unchanged: 0, deleted: 0, errors: 0 };
+
+    // Collect all chunks from all tables
+    const allChunks = []; // { source_table, source_id, chunk_index, text, metadata }
+
+    // Contacts
+    const { data: contacts } = await supabase.from('contacts').select('*');
+    for (const c of (contacts || [])) {
+      const chunks = chunkContact(c);
+      chunks.forEach((ch, i) => allChunks.push({ source_table: 'contacts', source_id: c.id, chunk_index: i, ...ch }));
+    }
+
+    // Tasks
+    const { data: tasks } = await supabase.from('tasks').select('*');
+    for (const t of (tasks || [])) {
+      const chunks = chunkTask(t);
+      chunks.forEach((ch, i) => allChunks.push({ source_table: 'tasks', source_id: t.id, chunk_index: i, ...ch }));
+    }
+
+    // Calendar posts
+    const { data: calendar } = await supabase.from('calendar_posts').select('*');
+    for (const p of (calendar || [])) {
+      const chunks = chunkCalendar(p);
+      chunks.forEach((ch, i) => allChunks.push({ source_table: 'calendar_posts', source_id: p.id, chunk_index: i, ...ch }));
+    }
+
+    // Scripts
+    const { data: scripts } = await supabase.from('scripts').select('*');
+    for (const s of (scripts || [])) {
+      const chunks = chunkScript(s);
+      chunks.forEach((ch, i) => allChunks.push({ source_table: 'scripts', source_id: s.id, chunk_index: i, ...ch }));
+    }
+
+    // Wiki articles
+    const { data: wikiArticles } = await supabase.from('wiki_articles').select('*, category:wiki_categories(title)');
+    for (const a of (wikiArticles || [])) {
+      const catTitle = a.category?.title || '';
+      const chunks = chunkWiki(a, catTitle);
+      chunks.forEach((ch, i) => allChunks.push({ source_table: 'wiki_articles', source_id: a.id, chunk_index: i, ...ch }));
+    }
+
+    // Strategies
+    const { data: strategies } = await supabase.from('strategies').select('*');
+    for (const s of (strategies || [])) {
+      const chunks = chunkStrategy(s);
+      chunks.forEach((ch, i) => allChunks.push({ source_table: 'strategies', source_id: s.id, chunk_index: i, ...ch }));
+    }
+
+    stats.total = allChunks.length;
+    console.log(`RAG sync: ${stats.total} chunks to process`);
+
+    // Get existing embeddings hashes
+    const { data: existing } = await supabase.from('embeddings').select('source_table, source_id, chunk_index, content_hash');
+    const existingMap = new Map();
+    for (const e of (existing || [])) {
+      existingMap.set(`${e.source_table}:${e.source_id}:${e.chunk_index}`, e.content_hash);
+    }
+
+    // Filter chunks that need embedding (new or changed)
+    const toEmbed = [];
+    const unchanged = [];
+    for (const chunk of allChunks) {
+      const hash = crypto.createHash('md5').update(chunk.text).digest('hex');
+      const key = `${chunk.source_table}:${chunk.source_id}:${chunk.chunk_index}`;
+      chunk.content_hash = hash;
+
+      if (existingMap.get(key) === hash) {
+        unchanged.push(key);
+        stats.unchanged++;
+      } else {
+        toEmbed.push(chunk);
+      }
+    }
+
+    console.log(`RAG sync: ${toEmbed.length} new/changed, ${stats.unchanged} unchanged`);
+
+    // Batch embed (max 128 per Voyage API call)
+    const batchSize = 128;
+    for (let i = 0; i < toEmbed.length; i += batchSize) {
+      const batch = toEmbed.slice(i, i + batchSize);
+      const texts = batch.map(c => c.text);
+
+      try {
+        const embeddings = await generateEmbeddings(texts);
+
+        // Upsert into Supabase
+        const rows = batch.map((c, j) => ({
+          source_table: c.source_table,
+          source_id: c.source_id,
+          chunk_index: c.chunk_index,
+          content_text: c.text,
+          content_hash: c.content_hash,
+          embedding: JSON.stringify(embeddings[j]),
+          metadata: c.metadata || {},
+        }));
+
+        const { error } = await supabase.from('embeddings').upsert(rows, {
+          onConflict: 'source_table,source_id,chunk_index',
+        });
+
+        if (error) {
+          console.error('Upsert error:', error.message);
+          stats.errors += batch.length;
+        } else {
+          stats.created += batch.length;
+        }
+      } catch (err) {
+        console.error('Embedding batch error:', err.message);
+        stats.errors += batch.length;
+      }
+    }
+
+    // Delete orphaned embeddings
+    const activeKeys = new Set(allChunks.map(c => `${c.source_table}:${c.source_id}:${c.chunk_index}`));
+    const toDelete = [];
+    for (const e of (existing || [])) {
+      const key = `${e.source_table}:${e.source_id}:${e.chunk_index}`;
+      if (!activeKeys.has(key)) toDelete.push(key);
+    }
+
+    if (toDelete.length > 0) {
+      for (const key of toDelete) {
+        const [table, id, idx] = key.split(':');
+        await supabase.from('embeddings').delete()
+          .eq('source_table', table).eq('source_id', id).eq('chunk_index', parseInt(idx));
+      }
+      stats.deleted = toDelete.length;
+    }
+
+    stats.latency_ms = Date.now() - startTime;
+    console.log(`RAG sync complete:`, stats);
+    res.json(stats);
+  } catch (err) {
+    console.error('RAG sync error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Search: semantic search with re-ranking
+app.post('/api/rag/search', authMiddleware, async (req, res) => {
+  try {
+    const { query, sources, metadata_filter, limit = 10 } = req.body;
+    if (!query) return res.status(400).json({ error: 'query required' });
+
+    const startTime = Date.now();
+
+    // Step 1: Embed query
+    const queryEmbedding = await generateQueryEmbedding(query);
+
+    // Step 2: Search via pgvector
+    const { data: results, error } = await supabase.rpc('search_embeddings', {
+      query_embedding: JSON.stringify(queryEmbedding),
+      match_threshold: 0.25,
+      match_count: 15,
+      filter_source: sources && sources.length === 1 ? sources[0] : null,
+      filter_metadata: metadata_filter || null,
+    });
+
+    if (error) throw error;
+
+    // Step 3: Re-rank
+    const reranked = rerank(results || [], query).slice(0, limit);
+
+    const latency = Date.now() - startTime;
+
+    // Log
+    await supabase.from('rag_logs').insert({
+      user_id: req.user.id,
+      query,
+      retrieved_count: reranked.length,
+      avg_similarity: reranked.length > 0 ? reranked.reduce((s, r) => s + r.similarity, 0) / reranked.length : 0,
+      sources_used: [...new Set(reranked.map(r => r.source_table))],
+      latency_ms: latency,
+    });
+
+    res.json({ results: reranked, latency_ms: latency });
+  } catch (err) {
+    console.error('RAG search error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Sync single record
+app.post('/api/rag/sync-record', authMiddleware, async (req, res) => {
+  try {
+    const { source_table, source_id } = req.body;
+    if (!source_table || !source_id) return res.status(400).json({ error: 'source_table and source_id required' });
+
+    // Fetch record
+    const { data: record, error: fetchErr } = await supabase.from(source_table).select('*').eq('id', source_id).single();
+
+    if (fetchErr || !record) {
+      // Record deleted — remove embedding
+      await supabase.from('embeddings').delete().eq('source_table', source_table).eq('source_id', source_id);
+      return res.json({ action: 'deleted' });
+    }
+
+    // Generate chunks based on table type
+    let chunks = [];
+    switch (source_table) {
+      case 'contacts': chunks = chunkContact(record); break;
+      case 'tasks': chunks = chunkTask(record); break;
+      case 'calendar_posts': chunks = chunkCalendar(record); break;
+      case 'scripts': chunks = chunkScript(record); break;
+      case 'strategies': chunks = chunkStrategy(record); break;
+      case 'wiki_articles': {
+        const { data: cat } = await supabase.from('wiki_categories').select('title').eq('id', record.category_id).single();
+        chunks = chunkWiki(record, cat?.title || '');
+        break;
+      }
+      default: return res.status(400).json({ error: 'unsupported table' });
+    }
+
+    // Generate embeddings
+    const texts = chunks.map(c => c.text);
+    const embeddings = await generateEmbeddings(texts);
+
+    // Upsert
+    const rows = chunks.map((c, i) => ({
+      source_table,
+      source_id,
+      chunk_index: i,
+      content_text: c.text,
+      content_hash: crypto.createHash('md5').update(c.text).digest('hex'),
+      embedding: JSON.stringify(embeddings[i]),
+      metadata: c.metadata || {},
+    }));
+
+    const { error } = await supabase.from('embeddings').upsert(rows, {
+      onConflict: 'source_table,source_id,chunk_index',
+    });
+
+    if (error) throw error;
+    res.json({ action: 'synced', chunks: rows.length });
+  } catch (err) {
+    console.error('RAG sync-record error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// AI Chat Proxy with RAG (production)
+// ---------------------------------------------------------------------------
+
+const RAG_SYSTEM_PROMPT = `Ты — AI-ассистент команды Rizko AI. Отвечай на русском языке, кратко и по делу. Помогай с маркетингом, контентом, стратегиями и бизнес-задачами.
+
+У тебя есть доступ к CRM базе данных компании. Ниже приведены релевантные данные найденные по запросу пользователя. Используй их для ответа. Если данных недостаточно, скажи об этом.`;
 
 app.post('/api/ai/chat', authMiddleware, async (req, res) => {
   try {
-    const { messages } = req.body;
+    const { messages, system_prompt } = req.body;
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: 'messages array required' });
     }
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    // Extract last user message for RAG
+    const chatMessages = messages.filter(m => m.role !== 'system');
+    const lastUserMsg = [...chatMessages].reverse().find(m => m.role === 'user');
+
+    // RAG: search for relevant context
+    let ragContext = '';
+    if (lastUserMsg) {
+      try {
+        const queryEmbedding = await generateQueryEmbedding(lastUserMsg.content);
+        const { data: results } = await supabase.rpc('search_embeddings', {
+          query_embedding: JSON.stringify(queryEmbedding),
+          match_threshold: 0.25,
+          match_count: 15,
+        });
+
+        if (results && results.length > 0) {
+          const reranked = rerank(results, lastUserMsg.content).slice(0, 8);
+          ragContext = '\n\n=== НАЙДЕННЫЕ ДАННЫЕ ===\n' +
+            reranked.map((r, i) => `[${r.source_table}] (совпадение: ${(r.final_score * 100).toFixed(0)}%)\n${r.content_text}`).join('\n\n') +
+            '\n=== КОНЕЦ ДАННЫХ ===';
+
+          // Log
+          await supabase.from('rag_logs').insert({
+            user_id: req.user.id,
+            query: lastUserMsg.content,
+            retrieved_count: reranked.length,
+            avg_similarity: reranked.reduce((s, r) => s + r.similarity, 0) / reranked.length,
+            sources_used: [...new Set(reranked.map(r => r.source_table))],
+            latency_ms: 0,
+          }).catch(() => {});
+        }
+      } catch (ragErr) {
+        console.error('RAG search failed, continuing without context:', ragErr.message);
+      }
+    }
+
+    // Build system prompt with RAG context
+    const basePrompt = system_prompt || RAG_SYSTEM_PROMPT;
+    const fullSystem = basePrompt + ragContext;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://rizko.ai',
-        'X-Title': 'Rizko Team Portal',
       },
       body: JSON.stringify({
-        model: OPENROUTER_MODEL,
-        messages,
+        model: ANTHROPIC_MODEL,
+        max_tokens: 4096,
+        system: fullSystem,
+        messages: chatMessages,
         stream: true,
       }),
     });
 
     if (!response.ok) {
       const err = await response.text();
+      console.error('Anthropic API error:', err);
       return res.status(response.status).json({ error: err });
     }
 
-    // Stream the response
+    // Stream SSE
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
+    let buffer = '';
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      res.write(decoder.decode(value, { stream: true }));
+      buffer += decoder.decode(value, { stream: true });
+
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || !trimmed.startsWith('data: ')) continue;
+        const data = trimmed.slice(6);
+        if (data === '[DONE]') continue;
+
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+            const openaiChunk = {
+              choices: [{ delta: { content: parsed.delta.text } }]
+            };
+            res.write(`data: ${JSON.stringify(openaiChunk)}\n\n`);
+          }
+        } catch (e) {
+          // skip
+        }
+      }
     }
+    res.write('data: [DONE]\n\n');
     res.end();
   } catch (err) {
     console.error('AI proxy error:', err);
