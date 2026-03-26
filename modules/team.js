@@ -23,6 +23,14 @@ const TeamModule = {
         const action = btn.dataset.action;
         const userId = btn.dataset.userId;
         if (!userId) return;
+
+        // Permission check: only own timer or admin
+        const isOwn = userId === Auth.userId();
+        if (!isOwn && !Auth.isSuperAdmin()) {
+          App.showToast('Вы можете управлять только своим таймером', 'error');
+          return;
+        }
+
         if (action === 'start') {
           this.startTimer(userId);
         } else if (action === 'stop') {
@@ -84,10 +92,36 @@ const TeamModule = {
       this.timeEntries = entries || [];
     }
 
+    // Build running timers map — only keep ONE running entry per user
+    // If duplicates exist, close the older ones
     this.runningTimers = {};
+    const runningByUser = {};
     for (const entry of this.timeEntries) {
-      if (entry.is_running) {
-        this.runningTimers[entry.user_id] = entry;
+      if (!entry.is_running) continue;
+      if (!runningByUser[entry.user_id]) {
+        runningByUser[entry.user_id] = [];
+      }
+      runningByUser[entry.user_id].push(entry);
+    }
+
+    for (const userId in runningByUser) {
+      const entries = runningByUser[userId];
+      // Keep only the newest, close the rest
+      entries.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+      this.runningTimers[userId] = entries[0];
+
+      for (let i = 1; i < entries.length; i++) {
+        const stale = entries[i];
+        const dur = Math.floor((Date.now() - new Date(stale.start_time).getTime()) / 1000);
+        stale.is_running = false;
+        stale.duration_seconds = dur;
+        stale.end_time = new Date().toISOString();
+        // Fire-and-forget DB cleanup
+        supabase
+          .from('time_entries')
+          .update({ end_time: stale.end_time, duration_seconds: dur, is_running: false })
+          .eq('id', stale.id)
+          .then();
       }
     }
   },
@@ -121,8 +155,27 @@ const TeamModule = {
     this.renderLog();
   },
 
-  // --- CARDS ---
+  // --- Get accumulated seconds for a member TODAY ---
+  getTodaySeconds(userId) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let totalSec = 0;
 
+    for (const entry of this.timeEntries) {
+      if (entry.user_id !== userId) continue;
+      const entryDate = new Date(entry.start_time);
+      if (entryDate < today) continue;
+
+      if (entry.is_running) {
+        totalSec += Math.floor((Date.now() - entryDate.getTime()) / 1000);
+      } else {
+        totalSec += entry.duration_seconds || 0;
+      }
+    }
+    return totalSec;
+  },
+
+  // --- CARDS ---
   renderCards() {
     const container = document.getElementById('team-cards');
     if (!container) return;
@@ -130,9 +183,11 @@ const TeamModule = {
     container.innerHTML = this.members.map(member => {
       const running = this.runningTimers[member.id];
       const isOnline = !!running;
-      const isOwnOrAdmin = member.id === Auth.userId() || Auth.isAdmin();
+      const isOwn = member.id === Auth.userId();
+      const canControl = isOwn || Auth.isSuperAdmin();
       const monthStats = this.getMemberMonthStats(member);
-      const timerDisplay = isOnline ? this.calcRunningTime(running) : '00:00:00';
+      const todaySec = this.getTodaySeconds(member.id);
+      const timerDisplay = this.formatSecondsHMS(todaySec);
       const currency = member.currency || 'USD';
       const rate = member.hourly_rate || 0;
 
@@ -151,26 +206,26 @@ const TeamModule = {
           <div class="member-timer">
             <span class="timer-value ${isOnline ? '' : 'off'}" id="timer-${member.id}">${timerDisplay}</span>
           </div>
-          ${isOwnOrAdmin ? `
-            <div class="member-stats-row">
+          ${canControl ? `
+            <div style="margin-bottom: 12px;">
               ${isOnline
-                ? `<button class="btn-sm btn-stop" data-action="stop" data-user-id="${member.id}">Pause</button>`
-                : `<button class="btn-sm btn-start" data-action="start" data-user-id="${member.id}">Start</button>`
+                ? `<button class="btn-sm btn-stop" data-action="stop" data-user-id="${member.id}">Пауза</button>`
+                : `<button class="btn-sm btn-start" data-action="start" data-user-id="${member.id}">Старт</button>`
               }
             </div>
           ` : ''}
           <div class="member-stats-row">
             <div class="member-stat">
               <div class="member-stat-val">${monthStats.hours.toFixed(1)}h</div>
-              <div class="member-stat-lbl">Monthly Hours</div>
+              <div class="member-stat-lbl">За месяц</div>
             </div>
             <div class="member-stat">
               <div class="member-stat-val">${App.formatCurrency(monthStats.earnings, currency)}</div>
-              <div class="member-stat-lbl">Earnings</div>
+              <div class="member-stat-lbl">Заработок</div>
             </div>
             <div class="member-stat">
-              <div class="member-stat-val">${App.formatCurrency(rate, currency)}/hr</div>
-              <div class="member-stat-lbl">Rate</div>
+              <div class="member-stat-val">${App.formatCurrency(rate, currency)}/ч</div>
+              <div class="member-stat-lbl">Ставка</div>
             </div>
           </div>
         </div>`;
@@ -199,12 +254,6 @@ const TeamModule = {
     return { hours, earnings: hours * rate };
   },
 
-  calcRunningTime(entry) {
-    const start = new Date(entry.start_time).getTime();
-    const elapsed = Math.floor((Date.now() - start) / 1000);
-    return this.formatSecondsHMS(Math.max(0, elapsed));
-  },
-
   formatSecondsHMS(totalSec) {
     const h = Math.floor(totalSec / 3600);
     const m = Math.floor((totalSec % 3600) / 60);
@@ -215,34 +264,64 @@ const TeamModule = {
   // --- TIMER ACTIONS ---
 
   async startTimer(userId) {
-    const existing = this.runningTimers[userId];
-    if (existing) {
-      await this.stopTimer(userId);
+    // Permission check
+    if (userId !== Auth.userId() && !Auth.isSuperAdmin()) {
+      App.showToast('Нет прав для управления этим таймером', 'error');
+      return;
     }
 
-    const now = new Date().toISOString();
+    // Don't start if already running
+    if (this.runningTimers[userId]) {
+      App.showToast('Таймер уже запущен', 'info');
+      return;
+    }
+
+    // Close any stale running entries in DB for this user
+    const now = new Date();
+    const { data: staleEntries } = await supabase
+      .from('time_entries')
+      .select('id, start_time')
+      .eq('user_id', userId)
+      .eq('is_running', true);
+
+    if (staleEntries && staleEntries.length > 0) {
+      for (const stale of staleEntries) {
+        const dur = Math.floor((now.getTime() - new Date(stale.start_time).getTime()) / 1000);
+        await supabase
+          .from('time_entries')
+          .update({ end_time: now.toISOString(), duration_seconds: dur, is_running: false })
+          .eq('id', stale.id);
+      }
+    }
+
     const { data, error } = await supabase
       .from('time_entries')
       .insert({
         user_id: userId,
-        start_time: now,
+        start_time: now.toISOString(),
         is_running: true
       })
       .select()
       .single();
 
     if (error) {
-      App.showToast('Failed to start timer: ' + error.message, 'error');
+      App.showToast('Ошибка запуска: ' + error.message, 'error');
       return;
     }
 
-    this.runningTimers[userId] = data;
-    this.timeEntries.unshift(data);
-    App.showToast('Timer started', 'success');
+    // Reload to get clean state
+    await this.loadData();
+    App.showToast('Таймер запущен', 'success');
     this.render();
   },
 
   async stopTimer(userId) {
+    // Permission check
+    if (userId !== Auth.userId() && !Auth.isSuperAdmin()) {
+      App.showToast('Нет прав для управления этим таймером', 'error');
+      return;
+    }
+
     const running = this.runningTimers[userId];
     if (!running) return;
 
@@ -260,7 +339,7 @@ const TeamModule = {
       .eq('id', running.id);
 
     if (error) {
-      App.showToast('Failed to stop timer: ' + error.message, 'error');
+      App.showToast('Ошибка паузы: ' + error.message, 'error');
       return;
     }
 
@@ -272,16 +351,17 @@ const TeamModule = {
     }
     delete this.runningTimers[userId];
 
-    App.showToast('Timer paused', 'success');
+    App.showToast('Таймер на паузе', 'success');
     this.render();
   },
 
   tickTimers() {
-    for (const userId in this.runningTimers) {
-      const entry = this.runningTimers[userId];
-      const timerEl = document.getElementById('timer-' + userId);
+    // Update ALL timer displays (including paused — show accumulated today time)
+    for (const member of this.members) {
+      const timerEl = document.getElementById('timer-' + member.id);
       if (timerEl) {
-        timerEl.textContent = this.calcRunningTime(entry);
+        const todaySec = this.getTodaySeconds(member.id);
+        timerEl.textContent = this.formatSecondsHMS(todaySec);
       }
     }
   },
@@ -319,19 +399,19 @@ const TeamModule = {
     container.innerHTML = `
       <div class="stat-card">
         <div class="stat-value">${totalHours.toFixed(1)}h</div>
-        <div class="stat-label">Total Hours</div>
+        <div class="stat-label">Всего часов</div>
       </div>
       <div class="stat-card">
         <div class="stat-value">${App.formatCurrency(totalPay, 'USD')}</div>
-        <div class="stat-label">Total Pay</div>
+        <div class="stat-label">Всего к оплате</div>
       </div>
       <div class="stat-card">
         <div class="stat-value">${memberCount}</div>
-        <div class="stat-label">Members</div>
+        <div class="stat-label">Участников</div>
       </div>
       <div class="stat-card">
         <div class="stat-value">${avgPerDay.toFixed(1)}h</div>
-        <div class="stat-label">Avg Hours/Day</div>
+        <div class="stat-label">Ср. часов/день</div>
       </div>
     `;
   },
@@ -389,7 +469,7 @@ const TeamModule = {
       memberColors[m.id] = this.chartColors[i % this.chartColors.length];
     });
 
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
     container.innerHTML = days.map(day => {
       const key = day.toISOString().slice(0, 10);
       const dayData = data[key] || {};
@@ -399,7 +479,7 @@ const TeamModule = {
         const hours = dayData[m.id] || 0;
         const pct = Math.max(0, (hours / maxHours) * 100);
         if (hours === 0) return '';
-        return '<div class="chart-bar" data-color="' + memberColors[m.id] + '" style="height:' + pct + '%;background:' + memberColors[m.id] + '" title="' + App.escapeHtml(m.full_name) + ': ' + hours.toFixed(1) + 'h"></div>';
+        return '<div class="chart-bar" style="height:' + pct + '%;background:' + memberColors[m.id] + '" title="' + App.escapeHtml(m.full_name) + ': ' + hours.toFixed(1) + 'h"></div>';
       }).join('');
 
       return `
@@ -424,21 +504,28 @@ const TeamModule = {
     if (!tbody) return;
 
     if (this.timeEntries.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No time entries found</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Нет записей</td></tr>';
       return;
     }
 
     tbody.innerHTML = this.timeEntries.map(entry => {
       const member = this.members.find(m => m.id === entry.user_id);
-      const memberName = member ? App.escapeHtml(member.full_name) : 'Unknown';
+      const memberName = member ? App.escapeHtml(member.full_name) : 'Неизвестен';
       const date = App.formatDate(entry.start_time);
-      const endTime = entry.end_time ? App.formatDate(entry.end_time) : (entry.is_running ? 'Running...' : '-');
+      const startTime = new Date(entry.start_time);
+      const startStr = String(startTime.getHours()).padStart(2, '0') + ':' + String(startTime.getMinutes()).padStart(2, '0');
+
+      let endStr = '—';
       let sec = 0;
       if (entry.is_running) {
-        sec = Math.floor((Date.now() - new Date(entry.start_time).getTime()) / 1000);
-      } else {
+        endStr = '<span class="online-badge">Активен</span>';
+        sec = Math.floor((Date.now() - startTime.getTime()) / 1000);
+      } else if (entry.end_time) {
+        const endTime = new Date(entry.end_time);
+        endStr = String(endTime.getHours()).padStart(2, '0') + ':' + String(endTime.getMinutes()).padStart(2, '0');
         sec = entry.duration_seconds || 0;
       }
+
       const hours = sec / 3600;
       const rate = member ? (member.hourly_rate || 0) : 0;
       const earnings = hours * rate;
@@ -448,8 +535,8 @@ const TeamModule = {
         <tr>
           <td>${memberName}</td>
           <td>${date}</td>
-          <td>${App.formatDate(entry.start_time)}</td>
-          <td>${endTime}</td>
+          <td>${startStr}</td>
+          <td>${endStr}</td>
           <td>${hours.toFixed(2)}h</td>
           <td>${App.formatCurrency(earnings, currency)}</td>
         </tr>`;

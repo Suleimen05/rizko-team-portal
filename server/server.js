@@ -131,10 +131,14 @@ bot.onText(/\/link\s+(.+)/, async (msg, match) => {
 // Express app
 // ---------------------------------------------------------------------------
 
+const path = require('path');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '..')));
 
 // ---------------------------------------------------------------------------
 // Auth middleware – extracts and verifies Supabase JWT
@@ -231,6 +235,25 @@ app.post(
       if (error) {
         console.error('Create user error:', error);
         return res.status(400).json({ error: error.message });
+      }
+
+      // Ensure profile exists (trigger may not fire or miss fields)
+      const userId = data.user.id;
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: userId,
+          email,
+          full_name: full_name || email,
+          initials: initials || (full_name || email).substring(0, 2).toUpperCase(),
+          role: role || 'member',
+          hourly_rate: hourly_rate || 0,
+          currency: currency || 'USD',
+          is_active: true,
+        }, { onConflict: 'id' });
+
+      if (profileError) {
+        console.error('Create profile error:', profileError);
       }
 
       return res.status(201).json({ user: data.user });
@@ -967,27 +990,25 @@ app.get('/api/health', (_req, res) => {
 // Telegram notification dispatcher — polls for unsent notifications
 // ---------------------------------------------------------------------------
 
-let lastNotifCheck = new Date().toISOString();
+const sentNotifIds = new Set();
 
 async function dispatchTelegramNotifications() {
   try {
-    // Get new notifications since last check
+    const since = new Date(Date.now() - 60000).toISOString(); // last 60s
     const { data: notifs, error } = await supabase
       .from('notifications')
-      .select('id, user_id, title, message, created_at')
-      .gt('created_at', lastNotifCheck)
+      .select('id, user_id, title, message')
+      .gt('created_at', since)
       .eq('is_read', false)
       .order('created_at', { ascending: true });
 
     if (error || !notifs || notifs.length === 0) return;
 
-    // Update checkpoint
-    lastNotifCheck = notifs[notifs.length - 1].created_at;
+    // Filter already sent
+    const newNotifs = notifs.filter(n => !sentNotifIds.has(n.id));
+    if (newNotifs.length === 0) return;
 
-    // Get unique user IDs
-    const userIds = [...new Set(notifs.map(n => n.user_id))];
-
-    // Fetch their telegram_chat_ids
+    const userIds = [...new Set(newNotifs.map(n => n.user_id))];
     const { data: profiles } = await supabase
       .from('profiles')
       .select('id, telegram_chat_id')
@@ -999,23 +1020,27 @@ async function dispatchTelegramNotifications() {
     const chatMap = {};
     profiles.forEach(p => { chatMap[p.id] = p.telegram_chat_id; });
 
-    // Send to Telegram
-    for (const notif of notifs) {
+    for (const notif of newNotifs) {
       const chatId = chatMap[notif.user_id];
       if (!chatId) continue;
-      const text = `📌 <b>${notif.title || 'Уведомление'}</b>\n${notif.message || ''}`;
       try {
-        await bot.sendMessage(chatId, text, { parse_mode: 'HTML' });
+        await bot.sendMessage(chatId, `📌 <b>${notif.title || 'Уведомление'}</b>\n${notif.message || ''}`, { parse_mode: 'HTML' });
+        sentNotifIds.add(notif.id);
       } catch (e) {
-        console.error('TG dispatch error for notif', notif.id, e.message);
+        console.error('TG dispatch error:', notif.id, e.message);
       }
+    }
+
+    // Cleanup old IDs (keep last 500)
+    if (sentNotifIds.size > 500) {
+      const arr = [...sentNotifIds];
+      arr.splice(0, arr.length - 500).forEach(id => sentNotifIds.delete(id));
     }
   } catch (e) {
     console.error('dispatchTelegramNotifications error:', e.message);
   }
 }
 
-// Check every 10 seconds
 setInterval(dispatchTelegramNotifications, 10000);
 
 // ---------------------------------------------------------------------------

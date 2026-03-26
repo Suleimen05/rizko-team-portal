@@ -56,25 +56,10 @@ const ReportsModule = {
       : '0.0';
 
     container.innerHTML = `
-      <div class="reports-summary">
-        <div class="report-stat">
-          <div class="report-stat-value">${totalVideos}</div>
-          <div class="report-stat-label">Videos Published</div>
-        </div>
-        <div class="report-stat">
-          <div class="report-stat-value">${this._formatNumber(totalViews)}</div>
-          <div class="report-stat-label">Total Views</div>
-        </div>
-        <div class="report-stat">
-          <div class="report-stat-value">${avgEngagement}%</div>
-          <div class="report-stat-label">Avg Engagement</div>
-          <div class="report-stat-change">${this._formatNumber(totalLikes)} likes</div>
-        </div>
-        <div class="report-stat">
-          <div class="report-stat-value">${this._formatNumber(totalComments)}</div>
-          <div class="report-stat-label">Total Comments</div>
-        </div>
-      </div>
+      <div class="stat-card"><div class="stat-icon purple"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></div><div><span class="stat-value">${totalVideos}</span><span class="stat-label">Видео</span></div></div>
+      <div class="stat-card"><div class="stat-icon blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><div><span class="stat-value">${this._formatNumber(totalViews)}</span><span class="stat-label">Просмотры</span></div></div>
+      <div class="stat-card"><div class="stat-icon orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div><span class="stat-value">${avgEngagement}%</span><span class="stat-label">Вовлечённость</span><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${this._formatNumber(totalLikes)} лайков</div></div></div>
+      <div class="stat-card"><div class="stat-icon green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div><span class="stat-value">${this._formatNumber(totalComments)}</span><span class="stat-label">Комментарии</span></div></div>
     `;
   },
 
@@ -87,30 +72,32 @@ const ReportsModule = {
       return;
     }
 
-    container.innerHTML = '<div class="video-reports-list">' + this.reports.map(r => {
-      const dateStr = r.published_date ? App.formatDate(r.published_date) : '-';
+    container.innerHTML = this.reports.map(r => {
+      const dateStr = r.published_date ? App.formatDate(r.published_date) : '—';
+      const platformColors = { 'TikTok': 'var(--purple)', 'YouTube Shorts': 'var(--red)', 'Instagram Reels': 'var(--orange)' };
+      const platformColor = platformColors[r.platform] || 'var(--primary)';
 
       return `
         <div class="video-report-item" data-id="${r.id}">
-          <div class="video-thumb">
+          <div class="video-thumb" style="position:relative;overflow:hidden;border-radius:10px;">
             ${r.thumbnail_url
-              ? '<img src="' + App.escapeHtml(r.thumbnail_url) + '" alt="">'
-              : '<span>&#9654;</span>'
+              ? '<img src="' + App.escapeHtml(r.thumbnail_url) + '" alt="" style="width:100%;height:100%;object-fit:cover;">'
+              : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg-hover);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity="0.4"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>'
             }
+            <span style="position:absolute;bottom:6px;left:6px;background:${platformColor};color:white;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;">${App.escapeHtml(r.platform || '')}</span>
           </div>
           <div class="video-report-info">
-            <div class="video-report-title">${App.escapeHtml(r.title || '')}</div>
-            <span class="video-platform">${App.escapeHtml(r.platform || '')}</span>
-            <div class="video-report-date">${dateStr}</div>
+            <h4 style="font-size:15px;font-weight:600;margin-bottom:4px;">${App.escapeHtml(r.title || '')}</h4>
+            <span class="video-report-date">${dateStr}</span>
           </div>
           <div class="video-report-stats">
-            <span title="Views"><i class="fas fa-eye"></i> ${this._formatNumber(r.views || 0)}</span>
-            <span title="Likes"><i class="fas fa-heart"></i> ${this._formatNumber(r.likes || 0)}</span>
-            <span title="Comments"><i class="fas fa-comment"></i> ${this._formatNumber(r.comments_count || 0)}</span>
+            <span title="Просмотры">👁 ${this._formatNumber(r.views || 0)}</span>
+            <span title="Лайки">❤ ${this._formatNumber(r.likes || 0)}</span>
+            <span title="Комментарии">💬 ${this._formatNumber(r.comments_count || 0)}</span>
           </div>
         </div>
       `;
-    }).join('') + '</div>';
+    }).join('');
   },
 
   showReportModal(reportId) {

@@ -621,7 +621,7 @@ a { color: inherit; text-decoration: none; }
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  min-height: 500px;
+  min-height: calc(100vh - 260px);
 }
 
 .kanban-column {
@@ -629,6 +629,12 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.kanban-column .kanban-cards {
+  flex: 1;
 }
 
 .kanban-header {
@@ -673,13 +679,15 @@ a { color: inherit; text-decoration: none; }
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 14px;
+  padding: 16px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s;
 }
 
 .kanban-card:hover {
   border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .kanban-card.highlight {
@@ -804,88 +812,73 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ===== REPORTS ===== */
-.reports-summary {
+#reports-summary {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
-.report-stat {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-}
-
-.report-stat-value {
-  display: block;
-  font-size: 28px;
-  font-weight: 700;
-}
-
-.report-stat-label {
-  display: block;
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-}
-
-.report-stat-change {
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.report-stat-change.positive { color: var(--green); }
-.report-stat-change.negative { color: var(--red); }
-
-.video-reports-list {
+#reports-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .video-report-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  transition: background 0.15s;
+  gap: 20px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .video-report-item:hover {
-  background: var(--bg-hover);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .video-thumb {
-  width: 64px;
-  height: 48px;
+  width: 120px;
+  height: 80px;
   background: var(--bg-hover);
-  border-radius: 8px;
+  border-radius: 10px;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .video-report-info {
   flex: 1;
+  min-width: 0;
 }
 
 .video-report-info h4 {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   margin-bottom: 4px;
-}
-
-.video-platform {
-  font-size: 12px;
-  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .video-report-stats {
   display: flex;
-  gap: 16px;
-  font-size: 13px;
+  gap: 20px;
+  font-size: 14px;
   color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.video-report-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .video-report-date {
@@ -2641,6 +2634,202 @@ a { color: inherit; text-decoration: none; }
 .text-muted {
   color: var(--text-muted);
   font-size: 14px;
+}
+
+/* ===== TASK DETAIL OVERLAY ===== */
+#task-detail-overlay .modal-lg {
+  max-width: 680px;
+}
+
+.task-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.task-detail-content .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.task-detail-content .form-group label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.task-detail-content .form-group select,
+.task-detail-content .form-group input,
+.task-detail-content .form-group textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+
+.task-detail-content .form-group select:focus,
+.task-detail-content .form-group input:focus,
+.task-detail-content .form-group textarea:focus {
+  border-color: var(--primary);
+}
+
+.task-detail-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 4px 0;
+}
+
+.task-detail-section {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+}
+
+.task-detail-section h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+/* Subtasks */
+.subtask-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.subtask-item:last-child {
+  border-bottom: none;
+}
+
+.subtask-check {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.subtask-item span {
+  flex: 1;
+}
+
+.subtask-del-btn {
+  opacity: 0;
+  transition: opacity 0.15s;
+  padding: 2px 8px !important;
+  font-size: 14px !important;
+}
+
+.subtask-item:hover .subtask-del-btn {
+  opacity: 1;
+}
+
+/* Comments */
+.comment-item {
+  padding: 12px 16px !important;
+  margin-bottom: 8px;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.comment-item p {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* Attachments */
+.attachment-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+}
+
+.attachment-item a {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.attachment-item a:hover {
+  color: var(--primary-hover);
+}
+
+/* Task detail action buttons */
+.task-detail-content > .btn-primary {
+  align-self: flex-start;
+  padding: 10px 24px;
+}
+
+.task-detail-content > .btn-danger {
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+/* Subtask / comment input row */
+.task-detail-section .form-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.task-detail-section .form-row input {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.task-detail-section .form-row input:focus {
+  border-color: var(--primary);
+}
+
+.task-detail-section .form-row .btn {
+  flex-shrink: 0;
+}
+
+/* Kanban card improvements */
+.kanban-card {
+  position: relative;
+}
+
+.kanban-card-tags .badge-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+}
+
+.kanban-card-footer .avatar-xs {
+  width: 22px;
+  height: 22px;
+  font-size: 9px;
 }
 
 /* ===== DRAG AND DROP ===== */
