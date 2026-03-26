@@ -26,7 +26,26 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
 // Telegram Bot (polling mode for development)
 // ---------------------------------------------------------------------------
 
-const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, {
+  polling: {
+    interval: 2000,
+    autoStart: true,
+    params: { timeout: 10 }
+  }
+});
+
+// Prevent Telegram polling errors from crashing the server
+bot.on('polling_error', (err) => {
+  if (err.code === 'ETELEGRAM' && err.message.includes('409')) {
+    console.warn('Telegram polling conflict (409) — retrying...');
+  } else {
+    console.error('Telegram polling error:', err.message);
+  }
+});
+
+bot.on('error', (err) => {
+  console.error('Telegram bot error:', err.message);
+});
 
 // In-memory store for linking codes: code -> { userId, telegramUsername, createdAt }
 const linkingCodes = new Map();
