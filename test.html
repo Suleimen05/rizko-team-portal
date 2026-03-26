@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head><title>Supabase Test</title></head>
+<body>
+<h1>Supabase Browser Test</h1>
+<pre id="log">Loading...</pre>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const log = document.getElementById('log');
+function addLog(msg) { log.textContent += '\n' + msg; }
+
+try {
+  addLog('1. window.supabase type: ' + typeof window.supabase);
+  addLog('2. window.supabase keys: ' + Object.keys(window.supabase).join(', '));
+  addLog('3. createClient type: ' + typeof window.supabase.createClient);
+
+  const client = window.supabase.createClient(
+    'https://romawqyfqlnmgwakgnkn.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvbWF3cXlmcWxubWd3YWtnbmtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NTc2MDMsImV4cCI6MjA5MDAzMzYwM30.qFTG3QEKGhDUOjg944myt3rh1gXP75KZqAp8fF_9z68'
+  );
+
+  addLog('4. client created: ' + typeof client);
+  addLog('5. client.auth type: ' + typeof client.auth);
+  addLog('6. signInWithPassword type: ' + typeof client.auth.signInWithPassword);
+
+  client.auth.signInWithPassword({
+    email: 'akyl@rizko.ai',
+    password: 'sulinurdos2026'
+  }).then(result => {
+    if (result.error) {
+      addLog('7. LOGIN ERROR: ' + result.error.message + ' status=' + result.error.status);
+    } else {
+      addLog('7. LOGIN SUCCESS: ' + result.data.user.email);
+
+      client.from('profiles').select('*').eq('id', result.data.user.id).single().then(r => {
+        if (r.error) addLog('8. PROFILE ERROR: ' + r.error.message);
+        else addLog('8. PROFILE OK: ' + r.data.full_name + ' ' + r.data.role);
+      });
+    }
+  });
+} catch(e) {
+  addLog('CATCH: ' + e.message);
+}
+</script>
+</body>
+</html>
