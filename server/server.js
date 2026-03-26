@@ -8,11 +8,11 @@ const crypto = require('crypto');
 // Configuration
 // ---------------------------------------------------------------------------
 
-const PORT = 3000;
-const SUPABASE_URL = 'https://romawqyfqlnmgwakgnkn.supabase.co';
-const SUPABASE_SERVICE_ROLE_KEY =
+const PORT = process.env.PORT || 3000;
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://romawqyfqlnmgwakgnkn.supabase.co';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvbWF3cXlmcWxubWd3YWtnbmtuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDQ1NzYwMywiZXhwIjoyMDkwMDMzNjAzfQ.f2g6LITOdqsGJVycEcjCPbrv0GILVAuirRVE-bEPBmc';
-const TELEGRAM_BOT_TOKEN = '8747271103:AAFaFudsrR-RcpZy4rWBSerYgUP-Q2-36Ao';
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8747271103:AAFaFudsrR-RcpZy4rWBSerYgUP-Q2-36Ao';
 
 // ---------------------------------------------------------------------------
 // Supabase client (service-role – full admin access)
@@ -428,9 +428,9 @@ app.post('/api/telegram/send', authMiddleware, async (req, res) => {
 // RAG System — Voyage AI Embeddings + pgvector Search + Re-ranking
 // ---------------------------------------------------------------------------
 
-const VOYAGE_API_KEY = 'pa-1D5LwTsiTDx0hv21SdJqsjflSSmRDpXvJe0DKlakFLb';
+const VOYAGE_API_KEY = process.env.VOYAGE_API_KEY || 'pa-1D5LwTsiTDx0hv21SdJqsjflSSmRDpXvJe0DKlakFLb';
 const VOYAGE_MODEL = 'voyage-3-lite';
-const ANTHROPIC_API_KEY = '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';
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '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';
 const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
 
 // --- Chunking functions: convert records to searchable text ---
